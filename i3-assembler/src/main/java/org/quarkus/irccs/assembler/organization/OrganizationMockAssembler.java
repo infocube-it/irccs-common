@@ -5,7 +5,7 @@ import org.hl7.fhir.r5.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrganizationResourceFun {
+public class OrganizationMockAssembler {
 
 
     //todo:: this is a missed param

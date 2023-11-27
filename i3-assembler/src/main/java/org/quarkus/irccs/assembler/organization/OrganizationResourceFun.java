@@ -26,7 +26,7 @@ public class OrganizationResourceFun {
     ext_id                          -
      */
 
-    public Organization getMockedOrganizationOne() {
+    public static Organization getMockedOrganizationOne() {
         Address address = new Address();
         Identifier identifier = new Identifier();
         Organization organization = new Organization();
@@ -54,7 +54,7 @@ public class OrganizationResourceFun {
         return organization;
     }
 
-    public  Organization getMockedOrganizationTwo() {
+    public  static Organization getMockedOrganizationTwo() {
         Address address = new Address();
         Identifier identifier = new Identifier();
         Organization organization = new Organization();

@@ -13,5 +13,6 @@ public class FhirConst {
     public static final String RESOURCE_TYPE_APPOINTMENT = "Appointment";
     public static final String FHIR_MEDIA_TYPE="application/fhir+json";
 
+    public static final String RESOURCE_TYPE_ORGANIZATION="Organization";
     public static final String RESOURCE_TYPE_PRACTITIONER = "Practitioner";
 }

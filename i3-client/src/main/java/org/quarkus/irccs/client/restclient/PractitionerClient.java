@@ -5,40 +5,32 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.Practitioner;
+import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IPractitionerClient;
 import org.quarkus.irccs.common.constants.FhirConst;
+import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
-@ApplicationScoped
-public class PractitionerClient {
-
-    @ConfigProperty(name = "org.quarkus.irccs.query.limit")
-    int queryLimit;
+public class PractitionerClient extends CustomFhirContext {
+    private final int queryLimit;
     private final IGenericClient iGenericClient;
 
     private final IPractitionerClient iPractitionerClient;
 
-    @Inject
-    PractitionerClient(@ConfigProperty(name = "org.quarkus.irccs.fhir-server") String serverBase) {
-        // Init Context
-        FhirContext ctx = FhirContext.forR5();
-        ctx.getRestfulClientFactory().setSocketTimeout(30000);
+
+    public PractitionerClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        this.queryLimit = queryLimit;
+        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
 
         //Create a Generic Client without map
-        iGenericClient = ctx.newRestfulGenericClient(serverBase);
-
-        iPractitionerClient = ctx.newRestfulClient(IPractitionerClient.class, serverBase);
+        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
+        iPractitionerClient = fhirContext.newRestfulClient(IPractitionerClient.class, serverBase);
     }
-
-
 
     public Practitioner getPractitionerById(IIdType theId) {
         return iPractitionerClient.getPractitionerById(theId);
@@ -62,7 +54,7 @@ public class PractitionerClient {
     }
 
     public Bundle getAllPractitioners() {
-        SortSpec sortSpec = new SortSpec("_lastUpdated",
+        SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE,
                 SortOrderEnum.DESC);
         return
                 iGenericClient.search()

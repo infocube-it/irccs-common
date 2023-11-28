@@ -3,27 +3,21 @@ package org.quarkus.irccs.client.restclient;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.MedicationAdministration;
+import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IMedicationAdministrationClient;
 
 
-@ApplicationScoped
-public class MedicationAdministrationClient {
 
+public class MedicationAdministrationClient extends CustomFhirContext {
+    private final int queryLimit;
     private final IGenericClient iGenericClient;
-
     private final IMedicationAdministrationClient iMedicationAdministrationClient;
 
-
-    @Inject
-    MedicationAdministrationClient(@ConfigProperty(name = "org.quarkus.irccs.fhir-server") String serverBase) {
-        // Init Context
-        FhirContext fhirContext = FhirContext.forR4();
-
+    public MedicationAdministrationClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        this.queryLimit = queryLimit;
 
         fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
 

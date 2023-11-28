@@ -5,33 +5,30 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
+import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IGroupClient;
 import org.quarkus.irccs.common.constants.FhirConst;
+import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
-@ApplicationScoped
-public class GroupClient {
-    @ConfigProperty(name = "org.quarkus.irccs.query.limit")
-    int queryLimit;
+public class GroupClient extends CustomFhirContext {
+
+    private final int queryLimit;
     private final IGenericClient iGenericClient;
     private final IGroupClient iGroupClient;
 
-    @Inject
-    GroupClient(@ConfigProperty(name = "org.quarkus.irccs.fhir-server") String serverBase) {
-        // Init Context
-        FhirContext ctx = FhirContext.forR5();
-        //Create a Generic Client without map
-        iGenericClient = ctx.newRestfulGenericClient(serverBase);
 
-        iGroupClient = ctx.newRestfulClient(IGroupClient.class, serverBase);
+    public GroupClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        this.queryLimit = queryLimit;
+        //Create a Generic Client without map
+        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
+
+        iGroupClient = fhirContext.newRestfulClient(IGroupClient.class, serverBase);
 
     }
 
@@ -43,7 +40,7 @@ public class GroupClient {
     }
 
     public Bundle getAllGroups() {
-        SortSpec sortSpec = new SortSpec("_lastUpdated",
+        SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE,
                 SortOrderEnum.DESC);
         return
                 iGenericClient.search()

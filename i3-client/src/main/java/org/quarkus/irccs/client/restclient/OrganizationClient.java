@@ -6,40 +6,36 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.*;
+import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IOrganizationClient;
+import org.quarkus.irccs.common.constants.FhirConst;
+import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
 import java.util.List;
 
-@ApplicationScoped
-public class OrganizationClient {
-
-    @ConfigProperty(name = "org.quarkus.irccs.query.limit")
-    int queryLimit;
-
+public class OrganizationClient extends CustomFhirContext {
+    private final int queryLimit;
     private final IGenericClient iGenericClient;
     private final IOrganizationClient iOrganizationClient;
 
-    @Inject
-    OrganizationClient(@ConfigProperty(name = "org.quarkus.irccs.fhir-server.url") String serverBase, @ConfigProperty(name = "org.quarkus.irccs.fhir-server.timeout") Integer timeout) {
-        // Init Context
-        FhirContext ctx = FhirContext.forR5();
-        ctx.getRestfulClientFactory().setSocketTimeout(timeout);
+
+    public OrganizationClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        this.queryLimit = queryLimit;
+
+        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
         //Create a Generic Client without map
-        iGenericClient = ctx.newRestfulGenericClient(serverBase);
+        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
         // Create the client
-        iOrganizationClient = ctx.newRestfulClient(IOrganizationClient.class, serverBase);
+        iOrganizationClient = fhirContext.newRestfulClient(IOrganizationClient.class, serverBase);
     }
 
 
     public OperationOutcome deleteOrganizationById(String id) {
         MethodOutcome response =
-                iGenericClient.delete().resourceById(new IdType("Organization", id)).execute();
+                iGenericClient.delete().resourceById(new IdType(FhirConst.RESOURCE_TYPE_ORGANIZATION, id)).execute();
 
         return (OperationOutcome) response.getOperationOutcome();
     }
@@ -50,7 +46,7 @@ public class OrganizationClient {
 
 
     public Bundle getAllOrganizations() {
-        SortSpec sortSpec = new SortSpec("_lastUpdated",
+        SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE,
                 SortOrderEnum.DESC);
         return
                 iGenericClient.search()
@@ -75,7 +71,7 @@ public class OrganizationClient {
     }
 
     public Organization updateOrganization(String id, Organization organization) {
-        IIdType idType = new IdType("Organization", id);
+        IIdType idType = new IdType(FhirConst.RESOURCE_TYPE_ORGANIZATION, id);
         organization.setId(idType.toString());
         iGenericClient.update().resource(organization).execute();
         return organization;

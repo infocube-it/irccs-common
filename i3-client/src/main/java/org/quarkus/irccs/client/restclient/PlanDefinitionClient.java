@@ -5,38 +5,34 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.PlanDefinition;
+import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IPlanDefinitionClient;
 import org.quarkus.irccs.common.constants.FhirConst;
+import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
-@ApplicationScoped
-public class PlanDefinitionClient {
-    @ConfigProperty(name = "org.quarkus.irccs.query.limit")
-    int queryLimit;
+public class PlanDefinitionClient extends CustomFhirContext {
+
+    private final int queryLimit;
     private final IGenericClient iGenericClient;
 
     private final IPlanDefinitionClient iPlanDefinitionClient;
 
-    @Inject
-    PlanDefinitionClient(@ConfigProperty(name = "org.quarkus.irccs.fhir-server") String serverBase) {
-        // Init Context
-        FhirContext ctx = FhirContext.forR5();
 
+    public PlanDefinitionClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        this.queryLimit = queryLimit;
 
-        ctx.getRestfulClientFactory().setSocketTimeout(30000);
+        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
 
         //Create a Generic Client without map
-        iGenericClient = ctx.newRestfulGenericClient(serverBase);
+        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
 
-        iPlanDefinitionClient = ctx.newRestfulClient(IPlanDefinitionClient.class, serverBase);
+        iPlanDefinitionClient = fhirContext.newRestfulClient(IPlanDefinitionClient.class, serverBase);
     }
 
 
@@ -62,7 +58,7 @@ public class PlanDefinitionClient {
     }
 
     public Bundle getAllPlanDefinitions() {
-        SortSpec sortSpec = new SortSpec("_lastUpdated",
+        SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE,
                 SortOrderEnum.DESC);
         return  iGenericClient.search()
                         .forResource(PlanDefinition.class)
@@ -74,7 +70,7 @@ public class PlanDefinitionClient {
 
     public OperationOutcome deletePlanDefinitionById(String id) {
         MethodOutcome response =
-                iGenericClient.delete().resourceById(new IdType("PlanDefinition", id)).execute();
+                iGenericClient.delete().resourceById(new IdType(FhirConst.RESOURCE_TYPE_PLAN_DEFINITION, id)).execute();
 
         return (OperationOutcome) response.getOperationOutcome();
     }

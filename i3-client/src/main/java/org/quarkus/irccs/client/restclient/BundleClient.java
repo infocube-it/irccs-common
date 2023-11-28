@@ -4,29 +4,27 @@ package org.quarkus.irccs.client.restclient;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.Organization;
+import org.quarkus.irccs.client.context.CustomFhirContext;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@ApplicationScoped
-public class BundleClient {
+
+public class BundleClient extends CustomFhirContext {
+    private final int queryLimit;
     private final IGenericClient iGenericClient;
 
-    @Inject
-    BundleClient(@ConfigProperty(name = "org.quarkus.irccs.fhir-server") String serverBase) {
-        // Init Context
-        FhirContext ctx = FhirContext.forR5();
+    public BundleClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        this.queryLimit = queryLimit;
 
         //Create a Generic Client without map
-        iGenericClient = ctx.newRestfulGenericClient(serverBase);
+        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
     }
 
     public void createOrganizations(List<Organization> organizations) {

@@ -5,37 +5,33 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.ResearchStudy;
+import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IResearchStudyClient;
 import org.quarkus.irccs.common.constants.FhirConst;
+import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
-@ApplicationScoped
-public class ResearchStudyClient {
 
-    @ConfigProperty(name = "org.quarkus.irccs.query.limit")
-    int queryLimit;
+public class ResearchStudyClient extends CustomFhirContext {
+    private final int queryLimit;
     private final IGenericClient iGenericClient;
 
     private final IResearchStudyClient iResearchStudyClient;
 
-    @Inject
-    ResearchStudyClient(@ConfigProperty(name = "org.quarkus.irccs.fhir-server") String serverBase) {
-        // Init Context
-        FhirContext ctx = FhirContext.forR5();
-        ctx.getRestfulClientFactory().setSocketTimeout(30000);
+
+    public ResearchStudyClient(String serverBase, int queryLimit,  FhirContext fhirContext) {
+        this.queryLimit = queryLimit;
+        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
 
         //Create a Generic Client without map
-        iGenericClient = ctx.newRestfulGenericClient(serverBase);
+        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
 
-        iResearchStudyClient = ctx.newRestfulClient(IResearchStudyClient.class, serverBase);
+        iResearchStudyClient = fhirContext.newRestfulClient(IResearchStudyClient.class, serverBase);
     }
 
 
@@ -46,7 +42,7 @@ public class ResearchStudyClient {
 
 
     public ResearchStudy updateResearchStudyById(String id, ResearchStudy researchStudy) {
-        IIdType idType = new IdType("Organization", id);
+        IIdType idType = new IdType(FhirConst.RESOURCE_TYPE_RESEARCHSTUDY, id);
         researchStudy.setId(idType.toString());
         iGenericClient.update().resource(researchStudy).execute();
         return researchStudy;
@@ -71,7 +67,7 @@ public class ResearchStudyClient {
     }
 
     public Bundle getAllStudies() {
-        SortSpec sortSpec = new SortSpec("_lastUpdated",
+        SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE,
                 SortOrderEnum.DESC);
         return
                 iGenericClient.search()
@@ -83,7 +79,7 @@ public class ResearchStudyClient {
     }
 
     public ResearchStudy updateStudy(String id, ResearchStudy study) {
-        IIdType idType = new IdType(FhirConst.RESOURCE_TYPE, id);
+        IIdType idType = new IdType(FhirConst.RESOURCE_TYPE_RESEARCHSTUDY, id);
         study.setId(idType.toString());
         iGenericClient.update().resource(study).execute();
         return study;
@@ -91,7 +87,7 @@ public class ResearchStudyClient {
 
     public OperationOutcome deleteStudyById(String id) {
         MethodOutcome response =
-                iGenericClient.delete().resourceById(new IdType("ResearchStudy", id)).execute();
+                iGenericClient.delete().resourceById(new IdType(FhirConst.RESOURCE_TYPE_RESEARCHSTUDY, id)).execute();
 
         return (OperationOutcome) response.getOperationOutcome();
     }

@@ -1,7 +1,7 @@
 package org.quarkus.irccs.common.constants;
 
 public class FhirConst {
-    public static final String RESOURCE_TYPE= "ResearchStudy";
+    public static final String RESOURCE_TYPE_RESEARCHSTUDY= "ResearchStudy";
     public static final String RESOURCE_TYPE_QUESTIONNAIRE= "Questionnaire";
     public static final String RESOURCE_TYPE_QUESTIONNAIRE_RESPONSE= "QuestionnaireResponse";
     public static final String RESOURCE_TYPE_PLAN_DEFINITION= "PlanDefinition";

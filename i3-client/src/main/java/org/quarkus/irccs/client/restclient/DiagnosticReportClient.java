@@ -3,28 +3,27 @@ package org.quarkus.irccs.client.restclient;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.DiagnosticReport;
+import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IDiagnosticReport;
 
 
-@ApplicationScoped
-public class DiagnosticReportClient {
 
+public class DiagnosticReportClient  extends CustomFhirContext {
+
+    private final int queryLimit;
     private final IGenericClient iGenericClient;
-    private IDiagnosticReport iDiagnosticReport;
+    private final IDiagnosticReport iDiagnosticReport;
 
-    @Inject
-    DiagnosticReportClient(@ConfigProperty(name = "org.quarkus.irccs.fhir-server") String serverBase) {
-        // Init Context
-        FhirContext ctx = FhirContext.forR5();
+
+    public DiagnosticReportClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        this.queryLimit = queryLimit;
+
         //Create a Generic Client without map
-        iGenericClient = ctx.newRestfulGenericClient(serverBase);
+        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
 
-        iDiagnosticReport = ctx.newRestfulClient(IDiagnosticReport.class, serverBase);
+        iDiagnosticReport = fhirContext.newRestfulClient(IDiagnosticReport.class, serverBase);
 
     }
 

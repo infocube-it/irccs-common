@@ -21,8 +21,6 @@ import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 public class DataTypeClient extends CustomFhirContext {
-
-
     private final int queryLimit;
 
     private final IGenericClient iGenericClient;
@@ -36,6 +34,7 @@ public class DataTypeClient extends CustomFhirContext {
 
 
     public DataTypeClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
 
         fhirContext.getRestfulClientFactory().setSocketTimeout(30000);

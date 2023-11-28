@@ -16,7 +16,7 @@ import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
-public class GroupClient extends CustomFhirContext {
+public class GroupClient extends CustomFhirContext  {
 
     private final int queryLimit;
     private final IGenericClient iGenericClient;
@@ -24,6 +24,7 @@ public class GroupClient extends CustomFhirContext {
 
 
     public GroupClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
         //Create a Generic Client without map
         iGenericClient = fhirContext.newRestfulGenericClient(serverBase);

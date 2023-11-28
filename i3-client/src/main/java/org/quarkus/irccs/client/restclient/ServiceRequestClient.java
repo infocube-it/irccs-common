@@ -21,6 +21,7 @@ public class ServiceRequestClient extends CustomFhirContext {
 
 
     public ServiceRequestClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
         fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
         //Create a Generic Client without map

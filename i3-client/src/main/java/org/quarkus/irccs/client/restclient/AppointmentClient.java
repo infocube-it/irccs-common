@@ -18,13 +18,14 @@ import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
-public class AppointmentClient extends CustomFhirContext {
+public class AppointmentClient extends CustomFhirContext{
     private final int queryLimit;
     private final IGenericClient iGenericClient;
     private final IAppointmentClient iAppointmentClient;
 
 
     public AppointmentClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
         //Create a Generic Client without map
         iGenericClient = fhirContext.newRestfulGenericClient(serverBase);

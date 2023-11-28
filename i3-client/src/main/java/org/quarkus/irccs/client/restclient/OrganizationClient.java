@@ -16,13 +16,14 @@ import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 import java.util.List;
 
-public class OrganizationClient extends CustomFhirContext {
+public class OrganizationClient extends CustomFhirContext  {
     private final int queryLimit;
     private final IGenericClient iGenericClient;
     private final IOrganizationClient iOrganizationClient;
 
 
     public OrganizationClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
 
         fhirContext.getRestfulClientFactory().setSocketTimeout(30000);

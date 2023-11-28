@@ -19,7 +19,7 @@ import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
 
-public class QuestionnaireResponseClient extends CustomFhirContext {
+public class QuestionnaireResponseClient  extends CustomFhirContext {
     private final int queryLimit;
     private final IGenericClient iGenericClient;
 
@@ -27,6 +27,7 @@ public class QuestionnaireResponseClient extends CustomFhirContext {
 
 
     public QuestionnaireResponseClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
         //Create a Generic Client without map
         iGenericClient = fhirContext.newRestfulGenericClient(serverBase);

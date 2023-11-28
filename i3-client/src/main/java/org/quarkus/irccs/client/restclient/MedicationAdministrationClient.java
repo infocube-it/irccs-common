@@ -17,13 +17,11 @@ public class MedicationAdministrationClient extends CustomFhirContext {
     private final IMedicationAdministrationClient iMedicationAdministrationClient;
 
     public MedicationAdministrationClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
-
         fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
-
         //Create a Generic Client without map
         iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-
         iMedicationAdministrationClient = fhirContext.newRestfulClient(IMedicationAdministrationClient.class, serverBase);
     }
 

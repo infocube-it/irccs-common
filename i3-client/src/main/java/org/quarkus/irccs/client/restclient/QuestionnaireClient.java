@@ -26,6 +26,7 @@ public class QuestionnaireClient extends CustomFhirContext {
 
 
     public QuestionnaireClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
 
         fhirContext.getRestfulClientFactory().setSocketTimeout(30000);

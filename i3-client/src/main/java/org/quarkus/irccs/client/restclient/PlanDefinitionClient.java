@@ -25,6 +25,7 @@ public class PlanDefinitionClient extends CustomFhirContext {
 
 
     public PlanDefinitionClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
 
         fhirContext.getRestfulClientFactory().setSocketTimeout(30000);

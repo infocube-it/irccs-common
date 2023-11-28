@@ -16,8 +16,7 @@ import org.quarkus.irccs.common.constants.FhirQueryConst;
 import static org.quarkus.irccs.common.constants.FhirConst.PATIENT_RESOURCE_TYPE;
 
 
-
-public class PatientClient extends CustomFhirContext {
+public class PatientClient extends CustomFhirContext  {
 
     private final int queryLimit;
     private final IGenericClient iGenericClient;
@@ -25,6 +24,7 @@ public class PatientClient extends CustomFhirContext {
 
 
     public PatientClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         // set a queryLimit
         this.queryLimit = queryLimit;
         //Create a Generic Client without map

@@ -21,8 +21,8 @@ public class BundleClient extends CustomFhirContext {
     private final IGenericClient iGenericClient;
 
     public BundleClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
-
         //Create a Generic Client without map
         iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
     }

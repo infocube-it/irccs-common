@@ -10,7 +10,7 @@ import org.quarkus.irccs.client.interfaces.IDiagnosticReport;
 
 
 
-public class DiagnosticReportClient  extends CustomFhirContext {
+public class DiagnosticReportClient extends CustomFhirContext {
 
     private final int queryLimit;
     private final IGenericClient iGenericClient;
@@ -18,6 +18,7 @@ public class DiagnosticReportClient  extends CustomFhirContext {
 
 
     public DiagnosticReportClient(String serverBase, int queryLimit, FhirContext fhirContext) {
+        super(fhirContext);
         this.queryLimit = queryLimit;
 
         //Create a Generic Client without map

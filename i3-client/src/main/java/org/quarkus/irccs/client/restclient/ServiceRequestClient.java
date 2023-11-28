@@ -8,25 +8,22 @@ import org.hl7.fhir.r5.model.CarePlan;
 import org.hl7.fhir.r5.model.ServiceRequest;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IServiceRequest;
-
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 
 
 public class ServiceRequestClient extends CustomFhirContext {
-
     private final int queryLimit;
     private final IGenericClient iGenericClient;
-
     private final IServiceRequest iServiceRequest;
 
 
+    public ServiceRequestClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
 
-    public ServiceRequestClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
-        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-        iServiceRequest = fhirContext.newRestfulClient(IServiceRequest.class, serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
+        iServiceRequest = fhirRestClientConfiguration.newRestfulClient(IServiceRequest.class);
     }
 
 

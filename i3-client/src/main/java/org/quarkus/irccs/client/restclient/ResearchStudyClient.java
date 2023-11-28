@@ -12,6 +12,7 @@ import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.ResearchStudy;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IResearchStudyClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
@@ -24,15 +25,13 @@ public class ResearchStudyClient extends CustomFhirContext  {
     private final IResearchStudyClient iResearchStudyClient;
 
 
-    public ResearchStudyClient(String serverBase, int queryLimit,  FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
-        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
+    public ResearchStudyClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
 
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-
-        iResearchStudyClient = fhirContext.newRestfulClient(IResearchStudyClient.class, serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
+        iResearchStudyClient = fhirRestClientConfiguration.newRestfulClient(IResearchStudyClient.class);
     }
 
 

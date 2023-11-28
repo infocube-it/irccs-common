@@ -12,6 +12,7 @@ import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IGroupClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
@@ -23,13 +24,12 @@ public class GroupClient extends CustomFhirContext  {
     private final IGroupClient iGroupClient;
 
 
-    public GroupClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
+    public GroupClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-
-        iGroupClient = fhirContext.newRestfulClient(IGroupClient.class, serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
+        iGroupClient = fhirRestClientConfiguration.newRestfulClient(IGroupClient.class);
 
     }
 

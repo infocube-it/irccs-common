@@ -10,6 +10,7 @@ import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.Organization;
 import org.quarkus.irccs.client.context.CustomFhirContext;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +21,11 @@ public class BundleClient extends CustomFhirContext {
     private final int queryLimit;
     private final IGenericClient iGenericClient;
 
-    public BundleClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
+    public BundleClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
     }
 
     public void createOrganizations(List<Organization> organizations) {

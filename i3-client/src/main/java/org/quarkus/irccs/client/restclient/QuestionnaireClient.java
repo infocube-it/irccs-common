@@ -12,32 +12,25 @@ import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.Questionnaire;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IQuestionnaireClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
 
 public class QuestionnaireClient extends CustomFhirContext {
-
     private final int queryLimit;
     private final IGenericClient iGenericClient;
-
     private final IQuestionnaireClient iQuestionnaireClient;
 
 
-    public QuestionnaireClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
-
-        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
-
+    public QuestionnaireClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-
-        iQuestionnaireClient = fhirContext.newRestfulClient(IQuestionnaireClient.class, serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
+        iQuestionnaireClient = fhirRestClientConfiguration.newRestfulClient(IQuestionnaireClient.class);
     }
-
-
 
     public Questionnaire getQuestionnaireById(IIdType theId) {
         return iQuestionnaireClient.getQuestionnaireById(theId);

@@ -12,28 +12,23 @@ import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.PlanDefinition;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IPlanDefinitionClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
 public class PlanDefinitionClient extends CustomFhirContext {
-
     private final int queryLimit;
     private final IGenericClient iGenericClient;
-
     private final IPlanDefinitionClient iPlanDefinitionClient;
 
 
-    public PlanDefinitionClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
-
-        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
-
+    public PlanDefinitionClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-
-        iPlanDefinitionClient = fhirContext.newRestfulClient(IPlanDefinitionClient.class, serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
+        iPlanDefinitionClient = fhirRestClientConfiguration.newRestfulClient(IPlanDefinitionClient.class);
     }
 
 

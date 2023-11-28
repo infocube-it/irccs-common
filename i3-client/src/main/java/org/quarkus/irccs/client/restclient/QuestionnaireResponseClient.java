@@ -5,8 +5,6 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.IdType;
@@ -14,6 +12,7 @@ import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.QuestionnaireResponse;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IQuestionnaireResponseClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
@@ -26,13 +25,12 @@ public class QuestionnaireResponseClient  extends CustomFhirContext {
     private final IQuestionnaireResponseClient iQuestionnaireResponseClient;
 
 
-    public QuestionnaireResponseClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
+    public QuestionnaireResponseClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-
-        iQuestionnaireResponseClient = fhirContext.newRestfulClient(IQuestionnaireResponseClient.class, serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
+        iQuestionnaireResponseClient = fhirRestClientConfiguration.newRestfulClient(IQuestionnaireResponseClient.class);
     }
 
 

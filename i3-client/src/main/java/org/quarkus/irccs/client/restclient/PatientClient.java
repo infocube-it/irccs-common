@@ -5,6 +5,9 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Produces;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.IdType;
@@ -12,8 +15,10 @@ import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.Patient;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IPatientClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 import static org.quarkus.irccs.common.constants.FhirConst.PATIENT_RESOURCE_TYPE;
+
 
 
 public class PatientClient extends CustomFhirContext  {
@@ -23,14 +28,14 @@ public class PatientClient extends CustomFhirContext  {
     private final IPatientClient iPatientClient;
 
 
-    public PatientClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
+    public PatientClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
         // set a queryLimit
-        this.queryLimit = queryLimit;
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
         // Create the client
-        iPatientClient = fhirContext.newRestfulClient(IPatientClient.class, serverBase);
+        iPatientClient = fhirRestClientConfiguration.newRestfulClient(IPatientClient.class);
     }
 
 

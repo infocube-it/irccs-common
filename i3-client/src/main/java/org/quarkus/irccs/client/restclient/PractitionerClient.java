@@ -12,6 +12,7 @@ import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.Practitioner;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IPractitionerClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
@@ -19,18 +20,15 @@ import org.quarkus.irccs.common.constants.FhirQueryConst;
 public class PractitionerClient extends CustomFhirContext  {
     private final int queryLimit;
     private final IGenericClient iGenericClient;
-
     private final IPractitionerClient iPractitionerClient;
 
-
-    public PractitionerClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
-        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
+    public PractitionerClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
 
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-        iPractitionerClient = fhirContext.newRestfulClient(IPractitionerClient.class, serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
+        iPractitionerClient = fhirRestClientConfiguration.newRestfulClient(IPractitionerClient.class);
     }
 
     public Practitioner getPractitionerById(IIdType theId) {

@@ -10,6 +10,7 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.*;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IOrganizationClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
@@ -22,15 +23,13 @@ public class OrganizationClient extends CustomFhirContext  {
     private final IOrganizationClient iOrganizationClient;
 
 
-    public OrganizationClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
-
-        fhirContext.getRestfulClientFactory().setSocketTimeout(30000);
+    public OrganizationClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
         // Create the client
-        iOrganizationClient = fhirContext.newRestfulClient(IOrganizationClient.class, serverBase);
+        iOrganizationClient = fhirRestClientConfiguration.newRestfulClient(IOrganizationClient.class);
     }
 
 

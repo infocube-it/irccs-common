@@ -7,7 +7,7 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.DiagnosticReport;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.interfaces.IDiagnosticReport;
-
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 
 
 public class DiagnosticReportClient extends CustomFhirContext {
@@ -17,14 +17,13 @@ public class DiagnosticReportClient extends CustomFhirContext {
     private final IDiagnosticReport iDiagnosticReport;
 
 
-    public DiagnosticReportClient(String serverBase, int queryLimit, FhirContext fhirContext) {
-        super(fhirContext);
-        this.queryLimit = queryLimit;
+    public DiagnosticReportClient(FhirRestClientConfiguration fhirRestClientConfiguration) {
+        super(fhirRestClientConfiguration.getFhirContext());
+        this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
 
         //Create a Generic Client without map
-        iGenericClient = fhirContext.newRestfulGenericClient(serverBase);
-
-        iDiagnosticReport = fhirContext.newRestfulClient(IDiagnosticReport.class, serverBase);
+        iGenericClient = fhirRestClientConfiguration.getiGenericClient();
+        iDiagnosticReport = fhirRestClientConfiguration.newRestfulClient(IDiagnosticReport.class);
 
     }
 

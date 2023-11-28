@@ -43,4 +43,13 @@ Edit you maven setting added:
   </profiles>  
 ```
 
+### How to run quarkus to local
+
+This env-Setup build using this configuration:
+```
+    Apache Maven 3.9.4
+    Java version: 19.0.2
+```
+
+
 replace **SECRET** with nexus credentials

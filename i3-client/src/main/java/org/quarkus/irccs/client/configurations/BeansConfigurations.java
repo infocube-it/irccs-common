@@ -25,6 +25,13 @@ public class BeansConfigurations {
 
     @Produces
     @ApplicationScoped
+    public OrganizationClient organizationClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
+        return new OrganizationClient(fhirRestClientConfiguration);
+    }
+
+
+    @Produces
+    @ApplicationScoped
     public AppointmentClient appointmentClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
         return new AppointmentClient(fhirRestClientConfiguration);
     }

@@ -15,6 +15,7 @@ public class FhirRestClientConfiguration {
     public FhirRestClientConfiguration(String serverBase, int queryLimit, FhirContext fhirContext) {
         this.serverBase = serverBase;
         this.queryLimit = queryLimit;
+        fhirContext.getRestfulClientFactory().setSocketTimeout(20000);
         this.fhirContext = fhirContext;
 
         //Create a Generic Client without map

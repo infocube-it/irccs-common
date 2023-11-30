@@ -84,5 +84,10 @@ public class BeansConfigurations {
     public ResearchStudyClient researchStudyClient (FhirRestClientConfiguration fhirRestClientConfiguration ) {
         return new ResearchStudyClient(fhirRestClientConfiguration);
     }
+    @Produces
+    @ApplicationScoped
+    public StructureDefinitionClient structureDefinitionClient (FhirRestClientConfiguration fhirRestClientConfiguration ) {
+        return new StructureDefinitionClient(fhirRestClientConfiguration);
+    }
 
 }

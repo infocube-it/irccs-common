@@ -25,6 +25,13 @@ public class BeansConfigurations {
 
     @Produces
     @ApplicationScoped
+    public PractitionerClient practitionerClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
+        return new PractitionerClient(fhirRestClientConfiguration);
+    }
+
+
+    @Produces
+    @ApplicationScoped
     public OrganizationClient organizationClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
         return new OrganizationClient(fhirRestClientConfiguration);
     }

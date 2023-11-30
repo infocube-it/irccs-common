@@ -1,6 +1,11 @@
 package org.quarkus.irccs.assembler.researchstudy;
 
 import org.hl7.fhir.r5.model.Group;
+import org.hl7.fhir.r5.model.Questionnaire;
+import org.hl7.fhir.r5.model.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroupAssembler {
 
@@ -8,12 +13,16 @@ public class GroupAssembler {
         Group group = new Group();
         group.setName(name);
         group.setQuantity(maxPax);
+        return group;
+    }
 
-        //group.setManagingEntity(new Reference(carePlan.getId()));
-        //group.addMember(new Group.GroupMemberComponent(new Reference(carePlan.getId())));
+    public static Group createAGroup(String name, int maxPax, Questionnaire questionnaire){
+        Group group = createAGroup(name,maxPax);
+        List<Resource> resourceList = new ArrayList<>();
+        resourceList.add(questionnaire);
+        group.setContained(resourceList);
 
         return group;
-
     }
-}
 
+}

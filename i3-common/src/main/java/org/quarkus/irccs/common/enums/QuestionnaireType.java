@@ -2,7 +2,7 @@ package org.quarkus.irccs.common.enums;
 
 public enum QuestionnaireType {
     PROCTC("PROCTC","V1"),
-
+    CRF_GROUP("CRF_GROUP", null),
     QUESTIONNAIRE("QUESTIONNAIRE", null),
     EORTC("EORTC", "V1"),
     CTC_V4("CTC","V4"),

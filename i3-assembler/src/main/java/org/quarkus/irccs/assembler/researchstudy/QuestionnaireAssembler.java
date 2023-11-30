@@ -10,6 +10,21 @@ import org.quarkus.irccs.common.constants.FhirConst;
 import java.util.ArrayList;
 import java.util.List;
 public class QuestionnaireAssembler {
+    public static Questionnaire createCRF(QuestionnaireType questionnaireType, List<String> questions){
+        Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.ACTIVE);
+        List<Questionnaire.QuestionnaireItemComponent> items = new ArrayList<>();
+
+        for(String question: questions) {
+            Questionnaire.QuestionnaireItemComponent questionnaireItemComponent = new Questionnaire.QuestionnaireItemComponent();
+            questionnaireItemComponent.setType(Questionnaire.QuestionnaireItemType.TEXT);
+            questionnaireItemComponent.setText(question);
+            items.add(questionnaireItemComponent);
+        }
+
+        questionnaire.setItem(items);
+        questionnaire.setIdentifier(getIdentifier(questionnaireType));
+        return questionnaire;
+    }
 
     public static Questionnaire createCTC(QuestionnaireType questionnaireType, String medDRACode, String cTCAETerm, String grade) {
 
@@ -30,14 +45,14 @@ public class QuestionnaireAssembler {
         Questionnaire.QuestionnaireItemComponent questionnaireItemComponent = new Questionnaire.QuestionnaireItemComponent();
         //questionnaireItemComponent.setText(medDRASOC);
 
-        items.add(questionnaireItemComponent);
-
 
 
         questionnaireItemComponent.setAnswerOption(answerOption);
 
         questionnaireItemComponent.setType(Questionnaire.QuestionnaireItemType.CODING);
         questionnaireItemComponent.setCode(codes);
+
+        items.add(questionnaireItemComponent);
 
         questionnaire.setStatus(Enumerations.PublicationStatus.UNKNOWN);
         questionnaire.setIdentifier(getIdentifier(questionnaireType));
@@ -220,6 +235,4 @@ public class QuestionnaireAssembler {
         return  questionnaire;
 
     }
-
-
 }

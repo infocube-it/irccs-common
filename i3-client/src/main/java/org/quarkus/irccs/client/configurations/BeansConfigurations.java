@@ -2,92 +2,35 @@ package org.quarkus.irccs.client.configurations;
 
 import ca.uhn.fhir.context.FhirContext;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Produces;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.quarkus.irccs.client.restclient.*;
 import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
+
+import java.lang.reflect.ParameterizedType;
 
 
 @Singleton
 public class BeansConfigurations {
+    @Produces
+    @Dependent
+    @SuppressWarnings("unchecked")
+    public <T extends IBaseResource> FhirResourceClient<T> create(InjectionPoint injectionPoint, FhirRestClientConfiguration fhirRestClientConfiguration) {
+        Class<T> type = (Class<T>) ((ParameterizedType) injectionPoint.getType()).getActualTypeArguments()[0];
+        return new FhirResourceClient<>(fhirRestClientConfiguration, type);
+    }
+
     @Produces
     @ApplicationScoped
     public FhirRestClientConfiguration fhirRestClientConfiguration(@ConfigProperty(name = "org.quarkus.irccs.fhir-server") String serverBase, @ConfigProperty(name = "org.quarkus.irccs.query.limit") int queryLimit ) {
         return new FhirRestClientConfiguration(serverBase,queryLimit, FhirContext.forR5());
     }
 
-    @Produces
-    @ApplicationScoped
-    public PatientClient patientClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new PatientClient(fhirRestClientConfiguration);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public PractitionerClient practitionerClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new PractitionerClient(fhirRestClientConfiguration);
-    }
-
-
-    @Produces
-    @ApplicationScoped
-    public OrganizationClient organizationClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new OrganizationClient(fhirRestClientConfiguration);
-    }
-
-
-    @Produces
-    @ApplicationScoped
-    public AppointmentClient appointmentClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new AppointmentClient(fhirRestClientConfiguration);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public DiagnosticReportClient diagnosticReportClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new DiagnosticReportClient(fhirRestClientConfiguration);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public DataTypeClient dataTypeClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new DataTypeClient(fhirRestClientConfiguration);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public GroupClient groupClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new GroupClient(fhirRestClientConfiguration);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public PlanDefinitionClient planDefinitionClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new PlanDefinitionClient(fhirRestClientConfiguration);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public QuestionnaireClient questionnaireClient (FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new QuestionnaireClient(fhirRestClientConfiguration);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public QuestionnaireResponseClient questionnaireResponseClient (FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new QuestionnaireResponseClient(fhirRestClientConfiguration);
-    }
-
-    @Produces
-    @ApplicationScoped
-    public ResearchStudyClient researchStudyClient (FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new ResearchStudyClient(fhirRestClientConfiguration);
-    }
-    @Produces
-    @ApplicationScoped
-    public StructureDefinitionClient structureDefinitionClient (FhirRestClientConfiguration fhirRestClientConfiguration ) {
-        return new StructureDefinitionClient(fhirRestClientConfiguration);
-    }
-
 }
+
+

@@ -15,7 +15,7 @@ import org.quarkus.irccs.client.interfaces.IQuestionnaireClient;
 import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
-
+import org.quarkus.irccs.common.enums.QuestionnaireType;
 
 
 public class QuestionnaireClient extends CustomFhirContext {
@@ -72,6 +72,14 @@ public class QuestionnaireClient extends CustomFhirContext {
         return (OperationOutcome) response.getOperationOutcome();
     }
 
+    public Bundle searchQuestionnaireByType(QuestionnaireType questionnaireType) {
+        return iGenericClient.search()
+                .forResource(Questionnaire.class)
+                .where(Questionnaire.IDENTIFIER.exactly().systemAndValues(questionnaireType.system, questionnaireType.value))
+                .returnBundle(Bundle.class)
+                .execute();
+    }
+
     public Bundle searchQuestionnaireByCode(String code) {
         return iGenericClient.search()
                 .forResource(Questionnaire.class)
@@ -79,5 +87,6 @@ public class QuestionnaireClient extends CustomFhirContext {
                 .returnBundle(Bundle.class)
                 .execute();
     }
+
 
 }

@@ -53,3 +53,8 @@ This env-Setup build using this configuration:
 
 
 replace **SECRET** with nexus credentials
+
+## How to update version at the project
+
+Run `mvn versions:set -DnewVersion=<version>`
+example: `mvn versions:set -DnewVersion=1.0.1-SNAPSHOT`

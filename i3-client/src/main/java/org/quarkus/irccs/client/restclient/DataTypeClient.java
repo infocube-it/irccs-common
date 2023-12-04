@@ -56,8 +56,6 @@ public class DataTypeClient extends CustomFhirContext {
         return  iCarePlanClient.getCarePlanById(theId);
     }
 
-
-
     public Bundle getAllCarePlan() {
         SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE,
                 SortOrderEnum.DESC);
@@ -134,4 +132,12 @@ public class DataTypeClient extends CustomFhirContext {
     public Appointment getAppointmentById(IIdType theId) {
         return iAppointmentClient.getAppointmentById(theId);
     }
+
+    public OperationOutcome deleteProcedure(String id) {
+        MethodOutcome response =
+                iGenericClient.delete().resourceById(new IdType(FhirConst.RESOURCE_TYPE_PROCEDURE, id)).execute();
+
+        return (OperationOutcome) response.getOperationOutcome();
+    }
+
 }

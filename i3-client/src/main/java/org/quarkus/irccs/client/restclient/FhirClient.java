@@ -4,27 +4,23 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.api.IRestfulClient;
-import ca.uhn.fhir.rest.client.impl.GenericClient;
-import ca.uhn.fhir.rest.gclient.ICriterion;
+import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
-import jakarta.enterprise.context.ApplicationScoped;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.*;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
-import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
 
-public class FhirResourceClient<T extends IBaseResource> extends CustomFhirContext {
+public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
     private final int queryLimit;
     private final IGenericClient iGenericClient;
     private final Class<T> resourceType;
 
-    public FhirResourceClient(FhirRestClientConfiguration fhirRestClientConfiguration, Class<T> resourceType) {
+    public FhirClient(FhirRestClientConfiguration fhirRestClientConfiguration, Class<T> resourceType) {
         super(fhirRestClientConfiguration.getFhirContext());
         this.queryLimit = fhirRestClientConfiguration.getQueryLimit();
         this.iGenericClient = fhirRestClientConfiguration.getiGenericClient();
@@ -33,6 +29,11 @@ public class FhirResourceClient<T extends IBaseResource> extends CustomFhirConte
 
     public T getResourceById(IIdType theId) {
         return iGenericClient.read().resource(resourceType).withId(theId).execute();
+    }
+
+    public T getResourceById(String theId) {
+        IIdType idType = new IdType(resourceType.getSimpleName(), theId);
+        return iGenericClient.read().resource(resourceType).withId(idType).execute();
     }
 
     public IIdType createResource(T resource) {
@@ -79,15 +80,19 @@ public class FhirResourceClient<T extends IBaseResource> extends CustomFhirConte
         return (OperationOutcome) response.getOperationOutcome();
     }
 
-   public Bundle getResourceByCode(String code) {
-       StringClientParam param = new StringClientParam(BaseResource.SP_RES_ID);
-
-        return iGenericClient.search()
-                .forResource(resourceType)
-                .where(param.matches().value(code))
-                        .returnBundle(Bundle.class)
-                        .execute();
+    public Bundle getResourceByCode(TokenClientParam identifier, String code){
+        return returnBundle(query().where(identifier.exactly().code(code)));
     }
 
+    public IQuery<?> query() {
+        return iGenericClient.search()
+                .forResource(resourceType);
+    }
+
+    public Bundle returnBundle(IQuery<?> query){
+        return query
+                .returnBundle(Bundle.class)
+                .execute();
+    }
 
 }

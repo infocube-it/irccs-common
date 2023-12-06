@@ -25,6 +25,13 @@ public class BeansConfigurations {
 
     @Produces
     @ApplicationScoped
+    public MedicationAdministrationClient medicationAdministrationClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
+        return new MedicationAdministrationClient(fhirRestClientConfiguration);
+    }
+
+
+    @Produces
+    @ApplicationScoped
     public PractitionerClient practitionerClient(FhirRestClientConfiguration fhirRestClientConfiguration ) {
         return new PractitionerClient(fhirRestClientConfiguration);
     }

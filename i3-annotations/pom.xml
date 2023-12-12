@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.quarkus.irccs</groupId>
         <artifactId>irccs-common</artifactId>
-        <version>1.0.10-SNAPSHOT</version>
+       <version>1.0.11-SNAPSHOT</version>
     </parent>
 
     <artifactId>i3-annotations</artifactId>
@@ -17,10 +17,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+
+        <!-- jakarta.enterprise -->
         <dependency>
-            <groupId>jakarta.interceptor</groupId>
-            <artifactId>jakarta.interceptor-api</artifactId>
-            <version>2.1.0</version>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-reactive</artifactId>
+            <version>3.0.1.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>4.4.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -29,18 +37,7 @@
             <version>2.15.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-core</artifactId>
-            <version>4.4.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>3.1.0</version>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
 
 </project>

@@ -9,30 +9,29 @@
         <version>1.0.10-SNAPSHOT</version>
     </parent>
 
-    <artifactId>i3-assembler</artifactId>
+    <artifactId>i3-authentication</artifactId>
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
+        <lombok.version>1.18.28</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-structures-r5 -->
         <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-structures-r5</artifactId>
-            <version>6.6.2</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>compile</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.quarkus.irccs</groupId>
-            <artifactId>i3-common</artifactId>
-            <version>1.0.10-SNAPSHOT</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.15.0</version>
+            <scope>compile</scope>
         </dependency>
-
-
-
     </dependencies>
+
 </project>

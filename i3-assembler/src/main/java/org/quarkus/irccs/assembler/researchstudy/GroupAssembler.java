@@ -25,4 +25,21 @@ public class GroupAssembler {
         return group;
     }
 
+
+
+    public static Group createGroupOfResearchStudy(Questionnaire  groupQuestionnaire) {
+        Group group = new Group();
+        group.setName("Nome gruppo");
+        group.setType(Group.GroupType.PERSON);
+        group.setDescription("Descrizione gruppo");
+        group.setMembership(Group.GroupMembershipBasis.DEFINITIONAL);
+
+        //Add Questionnare Group
+        List<Resource> contained = new ArrayList<>();
+        contained.add(groupQuestionnaire);
+
+        group.setContained(contained);
+        return group;
+    }
+
 }

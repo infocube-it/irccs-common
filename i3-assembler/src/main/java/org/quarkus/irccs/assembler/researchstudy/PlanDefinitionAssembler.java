@@ -22,8 +22,16 @@ public class PlanDefinitionAssembler {
         PlanDefinition.PlanDefinitionActionComponent planDefinitionActionComponent = new PlanDefinition.PlanDefinitionActionComponent();
 
         List<PlanDefinition.PlanDefinitionActionParticipantComponent> participantComponentList = new ArrayList<>();
-        participantComponentList.add(new PlanDefinition.PlanDefinitionActionParticipantComponent().setActorId(FhirConst.RESOURCE_TYPE_GROUP +"/"+group.getIdPart()));
-        participantComponentList.add(new PlanDefinition.PlanDefinitionActionParticipantComponent().setActorId(FhirConst.RESOURCE_TYPE_CAREPLAN +"/"+ carePlan.getIdPart()));
+
+        //participantComponentList.add(new PlanDefinition.PlanDefinitionActionParticipantComponent().setTypeReference(new Reference(carePlan)));
+        participantComponentList.add(new PlanDefinition.PlanDefinitionActionParticipantComponent().setTypeReference(new Reference(group)));
+
+        List<RelatedArtifact> artifacts = new ArrayList<>();
+        RelatedArtifact relatedArtifact = new RelatedArtifact(RelatedArtifact.RelatedArtifactType.CONTAINS);
+        relatedArtifact.setResourceReference(new Reference(carePlan));
+
+        artifacts.add(relatedArtifact);
+        planDefinition.setRelatedArtifact(artifacts);
 
         planDefinitionActionComponent.setParticipant(participantComponentList);
         planDefinitionActionComponents.add(planDefinitionActionComponent);
@@ -31,6 +39,7 @@ public class PlanDefinitionAssembler {
         return planDefinition;
     }
 
+    @Deprecated
     public static PlanDefinition createPlanDefinition(CarePlan carePlan, Group group) {
         PlanDefinition planDefinition = new PlanDefinition();
         Enumeration<Enumerations.PublicationStatus> enumerations

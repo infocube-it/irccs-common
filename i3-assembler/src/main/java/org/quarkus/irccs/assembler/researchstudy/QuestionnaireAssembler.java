@@ -120,12 +120,17 @@ public class QuestionnaireAssembler {
         questionnaire.setItem(items);
         questionnaire.setIdentifier(getIdentifier(questionnaireType));
 
-
-
         return questionnaire;
-
-
     }
+
+
+
+    public static Questionnaire createQuestionnaireForCarePlan() {
+        Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.UNKNOWN);
+        questionnaire.setIdentifier(getIdentifier(QuestionnaireType.QUESTIONNAIRE));
+        return questionnaire;
+    }
+
 
     private static List<Coding> getCode(String medDRACode, String cTCAETerm) {
         List<Coding> codes = new ArrayList<>();

@@ -10,6 +10,27 @@ import java.util.List;
 
 public class PlanDefinitionAssembler {
 
+
+    public static PlanDefinition createPlanDefinitionOfResearchStudy(CarePlan carePlan, Group group) {
+        PlanDefinition planDefinition = new PlanDefinition();
+        List<PlanDefinition.PlanDefinitionActionComponent> planDefinitionActionComponents = new ArrayList<>();
+
+        planDefinition.setTitle("Terapia");
+        planDefinition.setDescription("Descrizione terapia");
+        planDefinition.setStatus(Enumerations.PublicationStatus.ACTIVE);
+
+        PlanDefinition.PlanDefinitionActionComponent planDefinitionActionComponent = new PlanDefinition.PlanDefinitionActionComponent();
+
+        List<PlanDefinition.PlanDefinitionActionParticipantComponent> participantComponentList = new ArrayList<>();
+        participantComponentList.add(new PlanDefinition.PlanDefinitionActionParticipantComponent().setActorId(FhirConst.RESOURCE_TYPE_GROUP +"/"+group.getIdPart()));
+        participantComponentList.add(new PlanDefinition.PlanDefinitionActionParticipantComponent().setActorId(FhirConst.RESOURCE_TYPE_CAREPLAN +"/"+ carePlan.getIdPart()));
+
+        planDefinitionActionComponent.setParticipant(participantComponentList);
+        planDefinitionActionComponents.add(planDefinitionActionComponent);
+        planDefinition.setAction(planDefinitionActionComponents);
+        return planDefinition;
+    }
+
     public static PlanDefinition createPlanDefinition(CarePlan carePlan, Group group) {
         PlanDefinition planDefinition = new PlanDefinition();
         Enumeration<Enumerations.PublicationStatus> enumerations

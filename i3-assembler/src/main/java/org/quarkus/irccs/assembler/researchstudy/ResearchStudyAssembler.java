@@ -32,67 +32,66 @@ public class ResearchStudyAssembler {
     }
 
 
-    public static ResearchStudy createResearchStudy() {
-        // Study params
-        String NomeStudio                           = "Nome studio";
-        String CommentoItaliano                     = "Commento in italiano";
-        String CommentoInglese                      = "Commento in inglese";
-        String Eudract                              = "Eudract camp";
-        String Referente                            = "Nome referente";
-        String Telefono                             = "3336363698";
-        String Fax                                  = "000000";
-        String NotificaArruolamentoEmail            = "Notifica Arruolamento Email";
-        String eMailReferente                       = "mailReferente@provider.xxx";
-        String eMailAdesioni                        = "emailAdesioni@provider.xxx";
-        String eMailFarmcovig                       = "emailFarmcovif@provider.xxx";
-        int MaxPazienti                             = 5;
-        int MaxCentri                               = 5;
-        String MessaggioSuHomePage                  = "Messaggio su home page";
-        String PuoEssereSeguitoDa                   = "può essere seguito da";
-        String SegueDa                              = "segue da";
-        String VersioneToxCtc                       = "versione toc ctc";
-        String versioneProcCTC                      = "version proc ctc";
-        String MessaggioSuSceltaGruppo              = "messaggio su scelta gruppo";
-        boolean OnLine                              = true;
-        //ResearchStudy.ResearchStudyStatus Mostra    = ResearchStudy.ResearchStudyStatus.ACTIVE;
-        boolean TestSoloAmmin                       = true;
 
+    public static ResearchStudy createResearchStudy(Practitioner practitioner, PlanDefinition planDefinition) {
+        // Study params
+        String nomeStudio                           = "Nome studio";
+        String eudract                              = "Eudract camp";
+
+
+        int maxPazienti                             = 5;
+        String fase                                 = "phase-1";
+        String commento                             = "Commento di default";
+        Enumerations.PublicationStatus stato        = Enumerations.PublicationStatus.ACTIVE;
 
         //Research Object
+        List<Reference> protocols = new ArrayList<>();
         ResearchStudy researchStudy = new ResearchStudy();
-
-        //DataType
-        //List<ContactDetail> contactDetailList       = new ArrayList<>();
-        //ContactDetail contactDetail                 = new ContactDetail();
-        List<Annotation> annotationList             = new ArrayList<>();
-        //List<ContactPoint> contactPointList         = new ArrayList<>();
-
-        Annotation commentoItaliano                 = new Annotation();
-        Annotation commentoInglese                  = new Annotation();
-        Annotation notificaArruolamento             = new Annotation();
+        List<Identifier> identifiers = new ArrayList<>();
+        List<Annotation> annotations = new ArrayList<>();
+        List<ResearchStudy.ResearchStudyAssociatedPartyComponent> associatedPartyComponents = new ArrayList<>();
 
 
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.FAX).setValue(Fax));
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(Telefono));
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.OTHER).setValue(eMailReferente));
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.OTHER).setValue(eMailAdesioni));
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.OTHER).setValue(eMailFarmcovig));
+        //Add Nome
+        researchStudy.setName(nomeStudio);
+
+        //Add Referent
+        if(practitioner != null) {
+            ResearchStudy.ResearchStudyAssociatedPartyComponent researchStudyAssociatedPartyComponent = new ResearchStudy.ResearchStudyAssociatedPartyComponent();
+            researchStudyAssociatedPartyComponent.setParty(new Reference(practitioner.getId()));
+            associatedPartyComponents.add(researchStudyAssociatedPartyComponent);
+            researchStudy.setAssociatedParty(associatedPartyComponents);
+        }
 
 
-        //contactDetail.setTelecom(contactPointList);
-        //contactDetailList.add(contactDetail);
-        annotationList.add(commentoInglese);
-        annotationList.add(commentoItaliano);
-        annotationList.add(notificaArruolamento);
+        //Add PlanDefinition
+        if(planDefinition != null) {
+            protocols.add(new Reference(planDefinition));
+            researchStudy.setProtocol(protocols);
+        }
 
+        //Add Eudract
+        Identifier identifier = new Identifier();
+        identifier.setValue(eudract);
+        identifiers.add(identifier);
+        researchStudy.setIdentifier(identifiers);
 
-        //researchStudy populate
-        //researchStudy.setStatus(Mostra);
-        researchStudy.setTitle(NomeStudio);
-        researchStudy.setNote(annotationList);
+        //Setto lo stato
+        researchStudy.setStatus(stato);
 
+        //Aggiunta commento
+        Annotation annotation = new Annotation(commento);
+        annotations.add(annotation);
+        researchStudy.setNote(annotations);
 
-        //researchStudy.setContact(contactDetailList);
+        //Aggiunta MaxPaxienti
+        researchStudy.getRecruitment().setTargetNumber(maxPazienti);
+
+        //Aggiunta Fase
+        CodeableConcept phase = new CodeableConcept();
+        phase.setText(fase);
+        researchStudy.setPhase(phase);
+
 
         return  researchStudy;
     }

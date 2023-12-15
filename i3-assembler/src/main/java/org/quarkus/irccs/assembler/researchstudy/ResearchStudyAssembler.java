@@ -37,7 +37,7 @@ public class ResearchStudyAssembler {
         // Study params
         String nomeStudio                           = "Nome studio";
         String eudract                              = "Eudract camp";
-
+        String description                          = "La mia descrizione di studio";
 
         int maxPazienti                             = 5;
         String fase                                 = "phase-1";
@@ -53,7 +53,8 @@ public class ResearchStudyAssembler {
 
 
         //Add Nome
-        researchStudy.setName(nomeStudio);
+        researchStudy.setTitle(nomeStudio);
+        researchStudy.setDescription(description);
 
         //Add Referent
         if(practitioner != null) {

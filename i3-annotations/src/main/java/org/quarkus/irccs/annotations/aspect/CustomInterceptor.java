@@ -32,7 +32,7 @@ public class CustomInterceptor implements Serializable {
             System.out.println("Payload is: "+ payload);
         }
 
-        System.out.println("Response is: {}" + objectMapper.writeValueAsString( ctx.proceed()));
+        System.out.println("Response is: " + objectMapper.writeValueAsString( ctx.proceed()));
         return ctx.proceed();
     }
 

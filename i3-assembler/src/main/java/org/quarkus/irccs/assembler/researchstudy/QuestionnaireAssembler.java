@@ -5,6 +5,7 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.*;
 import org.quarkus.irccs.common.enums.QuestionnaireType;
 import org.quarkus.irccs.common.constants.FhirConst;
+import org.quarkus.irccs.common.fhir.questionnaire.QuestionnaireHelper;
 
 
 import java.util.ArrayList;
@@ -124,9 +125,10 @@ public class QuestionnaireAssembler {
     }
 
 
-
     public static Questionnaire createQuestionnaireForCarePlan() {
-        Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.UNKNOWN);
+        Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.ACTIVE);
+        questionnaire.setTitle("Registrazione e dati basali");
+        questionnaire.setDescription("Inserimento dei dati per la registrazione paziente");
         questionnaire.setIdentifier(getIdentifier(QuestionnaireType.QUESTIONNAIRE));
         return questionnaire;
     }
@@ -184,29 +186,35 @@ public class QuestionnaireAssembler {
 
 
     public static Questionnaire createGroupSection() {
-        Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.UNKNOWN);
+        Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.ACTIVE);
+
+        //Add Section
+        List<Questionnaire.QuestionnaireItemComponent> questionnaireItemComponents = new ArrayList<>();
+        Questionnaire.QuestionnaireItemComponent questionnaireItemComponent = new Questionnaire.QuestionnaireItemComponent();
+        questionnaireItemComponent.setText("Stadiazione"); // sezione
+        questionnaireItemComponent.setType(Questionnaire.QuestionnaireItemType.GROUP);
+
+
+
 
         //Add Question
         List<Questionnaire.QuestionnaireItemAnswerOptionComponent> answerOptionComponentList = new ArrayList<>();
         List<Questionnaire.QuestionnaireItemComponent> questionnaireItemComponentQuestions = new ArrayList<>();
         Questionnaire.QuestionnaireItemComponent questionnaireItemComponentQuestion = new Questionnaire.QuestionnaireItemComponent();
-        questionnaireItemComponentQuestion.setText("Testo Domanda");
-        questionnaireItemComponentQuestion.setType(Questionnaire.QuestionnaireItemType.TEXT);
+        questionnaireItemComponentQuestion.setText("CA125"); // Domanda
+        questionnaireItemComponentQuestion.setType(Questionnaire.QuestionnaireItemType.STRING);
         questionnaireItemComponentQuestion.setAnswerOption(answerOptionComponentList);
         questionnaireItemComponentQuestions.add(questionnaireItemComponentQuestion);
 
-        //Add Section
-        List<Questionnaire.QuestionnaireItemComponent> questionnaireItemComponents = new ArrayList<>();
-        Questionnaire.QuestionnaireItemComponent questionnaireItemComponent = new Questionnaire.QuestionnaireItemComponent();
-        questionnaireItemComponent.setText("Nome sezione");
-        questionnaireItemComponent.setType(Questionnaire.QuestionnaireItemType.GROUP);
         questionnaireItemComponent.setItem(questionnaireItemComponentQuestions);
+        questionnaireItemComponents.add(questionnaireItemComponent);
 
-        questionnaireItemComponent.addItem(questionnaireItemComponent);
         questionnaire.setItem(questionnaireItemComponents);
         questionnaire.setIdentifier(getIdentifier(QuestionnaireType.CRF_GROUP));
-        return questionnaire;
+
+        return QuestionnaireHelper.adjustLinkId(questionnaire);
     }
+
 
 
     private static Questionnaire.QuestionnaireItemComponent createItem(Questionnaire.QuestionnaireItemType type) {

@@ -13,13 +13,12 @@ public class PractitionerAssembler {
         Practitioner practitioner = new Practitioner();
 
         ArrayList<HumanName> names = new ArrayList<>();
-        names.add(createHumanName("Dr.", "Carla", "Carlucci"));
+        names.add(createHumanName("Dr.", "Sandro", "Pignata"));
         practitioner.setName(names);
         practitioner.setGender(Enumerations.AdministrativeGender.OTHER);
         practitioner.setBirthDate(new Date());
         practitioner.setDeceased(new BooleanType(false));
-        practitioner.setTelecom(createContactPoint("3387678787", "0826768987", "CarlaCarlucci@Pascal.it"));
-
+        practitioner.setTelecom(createContactPoint("3336363666", "0826768987", "SandroPignata@Pascal.it"));
 
         return practitioner;
     }

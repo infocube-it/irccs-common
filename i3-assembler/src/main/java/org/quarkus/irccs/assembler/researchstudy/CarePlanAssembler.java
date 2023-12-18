@@ -33,9 +33,10 @@ public class CarePlanAssembler {
 
         carePlan.setTitle("Fase 1 - Anagrafica Paziente");
         carePlan.setIntent(CarePlan.CarePlanIntent.PROPOSAL);
-        carePlan.setStatus(Enumerations.RequestStatus.UNKNOWN);
+        carePlan.setStatus(Enumerations.RequestStatus.ACTIVE);
         carePlan.setSubject(new Reference(patient));
 
+        carePlan.setDescription("Descrizione della fase e crf associate");
         CarePlan.CarePlanActivityComponent carePlanActivityComponent = new CarePlan.CarePlanActivityComponent();
         carePlanActivityComponent.setPlannedActivityReference(new Reference(appointment));
         List<CodeableReference>  codeableReferences = new ArrayList<>();
@@ -49,6 +50,8 @@ public class CarePlanAssembler {
         carePlan.setActivity(activity);
         return carePlan;
     }
+
+
 
 
     public static CarePlan initializeCarePlanWithAnnotationAndQuestionnaire(Annotation annotation, List<Questionnaire> questionnaires) {

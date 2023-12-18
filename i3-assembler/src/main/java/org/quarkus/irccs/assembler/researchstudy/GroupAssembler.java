@@ -1,8 +1,10 @@
 package org.quarkus.irccs.assembler.researchstudy;
 
 import org.hl7.fhir.r5.model.Group;
+import org.hl7.fhir.r5.model.Identifier;
 import org.hl7.fhir.r5.model.Questionnaire;
 import org.hl7.fhir.r5.model.Resource;
+import org.quarkus.irccs.common.enums.QuestionnaireType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +29,11 @@ public class GroupAssembler {
 
 
 
-    public static Group createGroupOfResearchStudy(Questionnaire  groupQuestionnaire) {
+    public static Group createGroupOfResearchStudy(Questionnaire  groupQuestionnaire, String nome) {
         Group group = new Group();
-        group.setName("Nome gruppo");
+        group.setName(nome);
         group.setType(Group.GroupType.PERSON);
-        group.setDescription("Descrizione gruppo");
+        group.setDescription("Gruppo di persone " + nome);
         group.setMembership(Group.GroupMembershipBasis.DEFINITIONAL);
 
         //Add Questionnare Group

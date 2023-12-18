@@ -13,8 +13,7 @@ public class AppointmentAssembler {
         Appointment appointment = new Appointment();
         appointment.setStatus(Appointment.AppointmentStatus.BOOKED);
         appointment.setCreated(new Date());
-        appointment.setDescription("Appuntamento di Follow-up");
-
+        appointment.setDescription("Incontro con paziente");
        return appointment;
     }
 

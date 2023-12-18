@@ -1,6 +1,5 @@
 package org.quarkus.irccs.client.restclient;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
@@ -79,6 +78,16 @@ public class QuestionnaireClient extends CustomFhirContext {
                 .returnBundle(Bundle.class)
                 .execute();
     }
+
+    public Bundle searchQuestionnaireByTypeAndTitle(QuestionnaireType questionnaireType, String name) {
+        return iGenericClient.search()
+                .forResource(Questionnaire.class)
+                .where(Questionnaire.IDENTIFIER.exactly().systemAndValues(questionnaireType.system, questionnaireType.value))
+                .and(Questionnaire.TITLE.matches().value(name))
+                .returnBundle(Bundle.class)
+                .execute();
+    }
+
 
     public Bundle searchQuestionnaireByCode(String code) {
         return iGenericClient.search()

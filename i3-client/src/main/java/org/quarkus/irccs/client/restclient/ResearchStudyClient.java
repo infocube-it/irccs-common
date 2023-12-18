@@ -66,6 +66,14 @@ public class ResearchStudyClient extends CustomFhirContext  {
                 .execute();
     }
 
+    public Bundle searchStudyByName(String name) {
+        return iGenericClient.search()
+                .forResource(ResearchStudy.class)
+                .where(ResearchStudy.TITLE.matches().value(name))
+                .returnBundle(Bundle.class)
+                .execute();
+    }
+
     public Bundle getAllStudies() {
         SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE,
                 SortOrderEnum.DESC);

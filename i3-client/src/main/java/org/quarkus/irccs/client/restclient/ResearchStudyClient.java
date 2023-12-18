@@ -77,10 +77,12 @@ public class ResearchStudyClient extends CustomFhirContext  {
     public Bundle getAllStudies() {
         SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE,
                 SortOrderEnum.DESC);
+
         return
                 iGenericClient.search()
                         .forResource(ResearchStudy.class)
                         .count(queryLimit)
+                        .withAdditionalHeader("Cache-Control", "no-cache")
                         .sort(sortSpec)
                         .returnBundle(Bundle.class)
                         .execute();

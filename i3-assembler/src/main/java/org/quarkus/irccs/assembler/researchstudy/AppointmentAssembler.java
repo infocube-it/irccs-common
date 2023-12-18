@@ -2,7 +2,9 @@ package org.quarkus.irccs.assembler.researchstudy;
 
 import org.hl7.fhir.r5.model.Appointment;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AppointmentAssembler {
 
@@ -16,6 +18,19 @@ public class AppointmentAssembler {
        return appointment;
     }
 
+
+    public static Appointment createAppointmentOfResearchStudy() {
+        Appointment appointment = new Appointment();
+        appointment.setStatus(Appointment.AppointmentStatus.NOSHOW);
+        List<Appointment.AppointmentParticipantComponent> participantComponentList = new ArrayList<>();
+        participantComponentList.add(
+                new Appointment.AppointmentParticipantComponent(Appointment.ParticipationStatus.ACCEPTED)
+        );
+
+
+        appointment.setParticipant(participantComponentList);
+        return appointment;
+    }
 
 
     public static Appointment createEmptyAppointment() {

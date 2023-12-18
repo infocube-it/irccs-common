@@ -33,11 +33,11 @@ public class ResearchStudyAssembler {
 
 
 
-    public static ResearchStudy createResearchStudy(Practitioner practitioner) {
+    public static ResearchStudy createResearchStudy(Practitioner practitioner, PlanDefinition planDefinition) {
         // Study params
         String nomeStudio                           = "Nome studio";
         String eudract                              = "Eudract camp";
-
+        String description                          = "La mia descrizione di studio";
 
         int maxPazienti                             = 5;
         String fase                                 = "phase-1";
@@ -45,6 +45,7 @@ public class ResearchStudyAssembler {
         Enumerations.PublicationStatus stato        = Enumerations.PublicationStatus.ACTIVE;
 
         //Research Object
+        List<Reference> protocols = new ArrayList<>();
         ResearchStudy researchStudy = new ResearchStudy();
         List<Identifier> identifiers = new ArrayList<>();
         List<Annotation> annotations = new ArrayList<>();
@@ -52,7 +53,8 @@ public class ResearchStudyAssembler {
 
 
         //Add Nome
-        researchStudy.setName(nomeStudio);
+        researchStudy.setTitle(nomeStudio);
+        researchStudy.setDescription(description);
 
         //Add Referent
         if(practitioner != null) {
@@ -63,6 +65,11 @@ public class ResearchStudyAssembler {
         }
 
 
+        //Add PlanDefinition
+        if(planDefinition != null) {
+            protocols.add(new Reference(planDefinition));
+            researchStudy.setProtocol(protocols);
+        }
 
         //Add Eudract
         Identifier identifier = new Identifier();

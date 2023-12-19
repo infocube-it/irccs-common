@@ -83,7 +83,7 @@ public class QuestionnaireClient extends CustomFhirContext {
         return iGenericClient.search()
                 .forResource(Questionnaire.class)
                 .where(Questionnaire.IDENTIFIER.exactly().systemAndValues(questionnaireType.system, questionnaireType.value))
-                .and(Questionnaire.TITLE.matches().value(name))
+                .and(Questionnaire.TITLE.contains().value(name))
                 .returnBundle(Bundle.class)
                 .execute();
     }

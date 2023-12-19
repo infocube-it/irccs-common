@@ -17,30 +17,62 @@ Add in *pom.xml*
 Edit you maven setting added:
 
 ```
-  <servers>
-  ...
+<servers>
     <server>
-      <id>nexusdeploymentrepo</id>
+      <id>nexus-snapshot</id>
       <username>SECRET</username>
       <password>SECRET</password>
     </server>
-    ....
-  </servers>
-  
-  <profiles>
-  ...
+
+    <server>
+      <id>nexus-release</id>
+      <username>SECRET</username>
+      <password>SECRET</password>
+    </server>
+</servers>    
+...
+
+<mirrors>
+	<mirror>
+	  <id>insecure-repo-snapshot</id>
+	  <mirrorOf>external:https:*</mirrorOf>
+	  <url>https://nexus.infocube.it:444/repository/irccs-common-snapshot/</url>
+	</mirror>
+	
+	<mirror>
+	  <id>insecure-repo-release</id>
+	  <mirrorOf>external:https:*</mirrorOf>
+	  <url>https://nexus.infocube.it:444/repository/irccs-common-release/</url>
+	</mirror>
+</mirrors>
+
+
+
+<profiles>
 	<profile>
      <id>snapshot</id>
      <repositories>
        <repository>
          <id>nexus-snapshot-repo</id>
          <name>irccs-common</name>
-         <url>http://nexus.infocube.it:8089/repository/irccs-common/</url>
+         <url>http://nexus.infocube.it:8089/repository/irccs-common-snapshot/</url>
        </repository>
      </repositories>
    </profile>
-   ....
-  </profiles>  
+   
+   
+   <profile>
+     <id>snapshot</id>
+     <repositories>
+       <repository>
+         <id>nexus-release-repo</id>
+         <name>irccs-common</name>
+         <url>http://nexus.infocube.it:8089/repository/irccs-common-release/</url>
+       </repository>
+     </repositories>
+   </profile>
+</profiles>
+
 ```
 
 ### How to run quarkus to local

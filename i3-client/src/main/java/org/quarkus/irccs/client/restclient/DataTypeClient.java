@@ -91,8 +91,7 @@ public class DataTypeClient extends CustomFhirContext {
 
     public void deleteCarePlan(String id) {
         MethodOutcome response =
-                iGenericClient.delete().resourceById(new IdType(FhirConst.RESOURCE_TYPE_GROUP, id)).execute();
-        //return (OperationOutcome) response.getOperationOutcome();
+                iGenericClient.delete().resourceById(new IdType(FhirConst.RESOURCE_TYPE_CAREPLAN, id)).execute();
     }
 
     public IIdType createQuestionnaire(Questionnaire questionnaire) {

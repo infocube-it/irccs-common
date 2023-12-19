@@ -75,6 +75,7 @@ public class QuestionnaireClient extends CustomFhirContext {
         return iGenericClient.search()
                 .forResource(Questionnaire.class)
                 .where(Questionnaire.IDENTIFIER.exactly().systemAndValues(questionnaireType.system, questionnaireType.value))
+                .withAdditionalHeader("Cache-Control", "no-cache")
                 .returnBundle(Bundle.class)
                 .execute();
     }
@@ -84,6 +85,7 @@ public class QuestionnaireClient extends CustomFhirContext {
                 .forResource(Questionnaire.class)
                 .where(Questionnaire.IDENTIFIER.exactly().systemAndValues(questionnaireType.system, questionnaireType.value))
                 .and(Questionnaire.TITLE.contains().value(name))
+                .withAdditionalHeader("Cache-Control", "no-cache")
                 .returnBundle(Bundle.class)
                 .execute();
     }

@@ -185,17 +185,15 @@ public class QuestionnaireAssembler {
 
 
 
-    public static Questionnaire createGroupSection() {
+    public static Questionnaire createGroupSection(String groupName) {
         Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.ACTIVE);
+        questionnaire.setTitle(groupName);
 
         //Add Section
         List<Questionnaire.QuestionnaireItemComponent> questionnaireItemComponents = new ArrayList<>();
         Questionnaire.QuestionnaireItemComponent questionnaireItemComponent = new Questionnaire.QuestionnaireItemComponent();
         questionnaireItemComponent.setText("Stadiazione"); // sezione
         questionnaireItemComponent.setType(Questionnaire.QuestionnaireItemType.GROUP);
-
-
-
 
         //Add Question
         List<Questionnaire.QuestionnaireItemAnswerOptionComponent> answerOptionComponentList = new ArrayList<>();

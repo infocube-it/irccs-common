@@ -6,12 +6,14 @@
 
     <groupId>org.quarkus.irccs</groupId>
     <artifactId>irccs-common</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>i3-common</module>
         <module>i3-assembler</module>
         <module>i3-client</module>
+        <module>i3-authentication</module>
+        <module>i3-annotations</module>
     </modules>
 
     <properties>
@@ -24,8 +26,13 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>nexusdeploymentrepo</id>
-            <url>http://nexus.infocube.it:8089/repository/irccs-common/</url>
+            <id>nexus-snapshot</id>
+            <url>http://nexus.infocube.it:8089/repository/irccs-common-snapshot/</url>
         </snapshotRepository>
+
+        <repository>
+            <id>nexus-release</id>
+            <url>http://nexus.infocube.it:8089/repository/irccs-common-release/</url>
+        </repository>
     </distributionManagement>
 </project>

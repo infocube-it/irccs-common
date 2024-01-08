@@ -5,6 +5,7 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.*;
 import org.quarkus.irccs.common.enums.QuestionnaireType;
 import org.quarkus.irccs.common.constants.FhirConst;
+import org.quarkus.irccs.common.fhir.questionnaire.QuestionnaireHelper;
 
 
 import java.util.ArrayList;
@@ -120,12 +121,18 @@ public class QuestionnaireAssembler {
         questionnaire.setItem(items);
         questionnaire.setIdentifier(getIdentifier(questionnaireType));
 
-
-
         return questionnaire;
-
-
     }
+
+
+    public static Questionnaire createQuestionnaireForCarePlan() {
+        Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.ACTIVE);
+        questionnaire.setTitle("Registrazione e dati basali");
+        questionnaire.setDescription("Inserimento dei dati per la registrazione paziente");
+        questionnaire.setIdentifier(getIdentifier(QuestionnaireType.QUESTIONNAIRE));
+        return questionnaire;
+    }
+
 
     private static List<Coding> getCode(String medDRACode, String cTCAETerm) {
         List<Coding> codes = new ArrayList<>();
@@ -175,6 +182,38 @@ public class QuestionnaireAssembler {
 
         return  resource;
     }
+
+
+
+    public static Questionnaire createGroupSection(String groupName) {
+        Questionnaire questionnaire = new Questionnaire(Enumerations.PublicationStatus.ACTIVE);
+        questionnaire.setTitle(groupName);
+
+        //Add Section
+        List<Questionnaire.QuestionnaireItemComponent> questionnaireItemComponents = new ArrayList<>();
+        Questionnaire.QuestionnaireItemComponent questionnaireItemComponent = new Questionnaire.QuestionnaireItemComponent();
+        questionnaireItemComponent.setText("Stadiazione"); // sezione
+        questionnaireItemComponent.setType(Questionnaire.QuestionnaireItemType.GROUP);
+
+        //Add Question
+        List<Questionnaire.QuestionnaireItemAnswerOptionComponent> answerOptionComponentList = new ArrayList<>();
+        List<Questionnaire.QuestionnaireItemComponent> questionnaireItemComponentQuestions = new ArrayList<>();
+        Questionnaire.QuestionnaireItemComponent questionnaireItemComponentQuestion = new Questionnaire.QuestionnaireItemComponent();
+        questionnaireItemComponentQuestion.setText("CA125"); // Domanda
+        questionnaireItemComponentQuestion.setType(Questionnaire.QuestionnaireItemType.STRING);
+        questionnaireItemComponentQuestion.setAnswerOption(answerOptionComponentList);
+        questionnaireItemComponentQuestions.add(questionnaireItemComponentQuestion);
+
+        questionnaireItemComponent.setItem(questionnaireItemComponentQuestions);
+        questionnaireItemComponents.add(questionnaireItemComponent);
+
+        questionnaire.setItem(questionnaireItemComponents);
+        questionnaire.setIdentifier(getIdentifier(QuestionnaireType.CRF_GROUP));
+
+        return QuestionnaireHelper.adjustLinkId(questionnaire);
+    }
+
+
 
     private static Questionnaire.QuestionnaireItemComponent createItem(Questionnaire.QuestionnaireItemType type) {
         Questionnaire.QuestionnaireItemComponent item = new Questionnaire.QuestionnaireItemComponent();

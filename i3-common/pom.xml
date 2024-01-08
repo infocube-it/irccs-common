@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.quarkus.irccs</groupId>
         <artifactId>irccs-common</artifactId>
-        <version>1.0.5-SNAPSHOT</version>
+       <version>1.0.0</version>
     </parent>
 
     <artifactId>i3-common</artifactId>
@@ -16,5 +16,14 @@
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-structures-r5 -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r5</artifactId>
+            <version>6.6.2</version>
+        </dependency>
+    </dependencies>
 
 </project>

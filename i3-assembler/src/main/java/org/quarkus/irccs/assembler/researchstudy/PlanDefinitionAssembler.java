@@ -10,6 +10,39 @@ import java.util.List;
 
 public class PlanDefinitionAssembler {
 
+
+    public static PlanDefinition createPlanDefinitionOfResearchStudy(List<CarePlan> carePlans, List<Group> groups) {
+        PlanDefinition planDefinition = new PlanDefinition();
+        List<PlanDefinition.PlanDefinitionActionComponent> planDefinitionActionComponents = new ArrayList<>();
+
+        planDefinition.setTitle("Trattamento NIRAPARIB");
+        planDefinition.setDescription("Descrizione del piano terapeutico associato al farmaco NIRAPARIB");
+        planDefinition.setStatus(Enumerations.PublicationStatus.ACTIVE);
+
+        PlanDefinition.PlanDefinitionActionComponent planDefinitionActionComponent = new PlanDefinition.PlanDefinitionActionComponent();
+
+        List<PlanDefinition.PlanDefinitionActionParticipantComponent> participantComponentList = new ArrayList<>();
+
+        for (Group group: groups) {
+            participantComponentList.add(new PlanDefinition.PlanDefinitionActionParticipantComponent().setTypeReference(new Reference(group)));
+        }
+
+        List<RelatedArtifact> artifacts = new ArrayList<>();
+        for(CarePlan carePlan : carePlans) {
+            RelatedArtifact relatedArtifact = new RelatedArtifact(RelatedArtifact.RelatedArtifactType.CONTAINS);
+            relatedArtifact.setResourceReference(new Reference(carePlan));
+
+            artifacts.add(relatedArtifact);
+        }
+
+        planDefinition.setRelatedArtifact(artifacts);
+        planDefinitionActionComponent.setParticipant(participantComponentList);
+        planDefinitionActionComponents.add(planDefinitionActionComponent);
+        planDefinition.setAction(planDefinitionActionComponents);
+        return planDefinition;
+    }
+
+    @Deprecated
     public static PlanDefinition createPlanDefinition(CarePlan carePlan, Group group) {
         PlanDefinition planDefinition = new PlanDefinition();
         Enumeration<Enumerations.PublicationStatus> enumerations

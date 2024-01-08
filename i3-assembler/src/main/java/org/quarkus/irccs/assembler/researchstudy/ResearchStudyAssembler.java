@@ -32,67 +32,79 @@ public class ResearchStudyAssembler {
     }
 
 
-    public static ResearchStudy createResearchStudy() {
-        // Study params
-        String NomeStudio                           = "Nome studio";
-        String CommentoItaliano                     = "Commento in italiano";
-        String CommentoInglese                      = "Commento in inglese";
-        String Eudract                              = "Eudract camp";
-        String Referente                            = "Nome referente";
-        String Telefono                             = "3336363698";
-        String Fax                                  = "000000";
-        String NotificaArruolamentoEmail            = "Notifica Arruolamento Email";
-        String eMailReferente                       = "mailReferente@provider.xxx";
-        String eMailAdesioni                        = "emailAdesioni@provider.xxx";
-        String eMailFarmcovig                       = "emailFarmcovif@provider.xxx";
-        int MaxPazienti                             = 5;
-        int MaxCentri                               = 5;
-        String MessaggioSuHomePage                  = "Messaggio su home page";
-        String PuoEssereSeguitoDa                   = "può essere seguito da";
-        String SegueDa                              = "segue da";
-        String VersioneToxCtc                       = "versione toc ctc";
-        String versioneProcCTC                      = "version proc ctc";
-        String MessaggioSuSceltaGruppo              = "messaggio su scelta gruppo";
-        boolean OnLine                              = true;
-        //ResearchStudy.ResearchStudyStatus Mostra    = ResearchStudy.ResearchStudyStatus.ACTIVE;
-        boolean TestSoloAmmin                       = true;
 
+    public static ResearchStudy createResearchStudy(Practitioner practitioner, PlanDefinition planDefinition, List<Group> groups) {
+        // Study params
+        String nomeStudio                           = "MITO40";
+        String eudract                              = "2020-001386-37";
+        String description                          = "Studio osservazionale, retrospettivo, multicentrico, no profit, dal titolo 'Studio osservazionale retrospettivo, multicentrico, mirato a raccogliere gli outcomes clinici del “Niraparib” come terapia di mantenimento in pazienti affetti da tumore ovarico epiteliale di alto grado, delle tube di falloppio o peritoneale primitivo dopo risposta (parziale o completa) alla chemioterapia di prima linea a base di platino: an observational real-life study: MITO 40'.";
+
+        int maxPazienti                             = 50;
+        String fase                                 = "phase-1";
+        String primoCommento                        = "Referente studio Dr.Pignata +393336363666";
+        String secondoCommento                      = "Lo studio avrà inizio tra due mesi";
+        Enumerations.PublicationStatus stato        = Enumerations.PublicationStatus.ACTIVE;
 
         //Research Object
+        List<Reference> protocols = new ArrayList<>();
         ResearchStudy researchStudy = new ResearchStudy();
-
-        //DataType
-        //List<ContactDetail> contactDetailList       = new ArrayList<>();
-        //ContactDetail contactDetail                 = new ContactDetail();
-        List<Annotation> annotationList             = new ArrayList<>();
-        //List<ContactPoint> contactPointList         = new ArrayList<>();
-
-        Annotation commentoItaliano                 = new Annotation();
-        Annotation commentoInglese                  = new Annotation();
-        Annotation notificaArruolamento             = new Annotation();
+        List<Identifier> identifiers = new ArrayList<>();
+        List<Annotation> annotations = new ArrayList<>();
+        List<ResearchStudy.ResearchStudyComparisonGroupComponent> comparisonGroupComponents = new ArrayList<>();
+        List<ResearchStudy.ResearchStudyAssociatedPartyComponent> associatedPartyComponents = new ArrayList<>();
 
 
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.FAX).setValue(Fax));
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(Telefono));
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.OTHER).setValue(eMailReferente));
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.OTHER).setValue(eMailAdesioni));
-        //contactPointList.add(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.OTHER).setValue(eMailFarmcovig));
+        for(Group group : groups) {
+            ResearchStudy.ResearchStudyComparisonGroupComponent researchStudyComparisonGroupComponent = new ResearchStudy.ResearchStudyComparisonGroupComponent();
+            researchStudyComparisonGroupComponent.setObservedGroup(new Reference(group));
 
+            comparisonGroupComponents.add(researchStudyComparisonGroupComponent);
+        }
 
-        //contactDetail.setTelecom(contactPointList);
-        //contactDetailList.add(contactDetail);
-        annotationList.add(commentoInglese);
-        annotationList.add(commentoItaliano);
-        annotationList.add(notificaArruolamento);
+        researchStudy.setComparisonGroup(comparisonGroupComponents);
 
+        //Add Nome
+        researchStudy.setTitle(nomeStudio);
+        researchStudy.setDescription(description);
 
-        //researchStudy populate
-        //researchStudy.setStatus(Mostra);
-        researchStudy.setTitle(NomeStudio);
-        researchStudy.setNote(annotationList);
+        //Add Referent
+        if(practitioner != null) {
+            ResearchStudy.ResearchStudyAssociatedPartyComponent researchStudyAssociatedPartyComponent = new ResearchStudy.ResearchStudyAssociatedPartyComponent();
+            researchStudyAssociatedPartyComponent.setParty(new Reference(practitioner.getId()));
+            associatedPartyComponents.add(researchStudyAssociatedPartyComponent);
+            researchStudy.setAssociatedParty(associatedPartyComponents);
+        }
 
+        //Add PlanDefinition
+        if(planDefinition != null) {
+            protocols.add(new Reference(planDefinition));
+            researchStudy.setProtocol(protocols);
+        }
 
-        //researchStudy.setContact(contactDetailList);
+        //Add Eudract
+        Identifier identifier = new Identifier();
+        identifier.setValue(eudract);
+        identifiers.add(identifier);
+        researchStudy.setIdentifier(identifiers);
+
+        //Setto lo stato
+        researchStudy.setStatus(stato);
+
+        //Aggiunta commento
+        Annotation annotation = new Annotation(primoCommento);
+        Annotation secondAnnotation = new Annotation(secondoCommento);
+        annotations.add(annotation);
+        annotations.add(secondAnnotation);
+
+        researchStudy.setNote(annotations);
+        //Aggiunta MaxPaxienti
+        researchStudy.getRecruitment().setTargetNumber(maxPazienti);
+
+        //Aggiunta Fase
+        CodeableConcept phase = new CodeableConcept();
+        phase.setText(fase);
+        researchStudy.setPhase(phase);
+
 
         return  researchStudy;
     }

@@ -25,6 +25,35 @@ public class CarePlanAssembler {
         return carePlan;
     }
 
+
+
+    public static CarePlan createCarePlanOfPlanDefinition(Patient patient, Questionnaire questionnaire, Appointment appointment) {
+        CarePlan carePlan = new CarePlan();
+        List<CarePlan.CarePlanActivityComponent> activity = new ArrayList<>();
+
+        carePlan.setTitle("Fase 1 - Anagrafica Paziente");
+        carePlan.setIntent(CarePlan.CarePlanIntent.PROPOSAL);
+        carePlan.setStatus(Enumerations.RequestStatus.ACTIVE);
+        carePlan.setSubject(new Reference(patient));
+
+        carePlan.setDescription("Descrizione della fase e crf associate");
+        CarePlan.CarePlanActivityComponent carePlanActivityComponent = new CarePlan.CarePlanActivityComponent();
+        carePlanActivityComponent.setPlannedActivityReference(new Reference(appointment));
+        List<CodeableReference>  codeableReferences = new ArrayList<>();
+        Reference questionnaireReference = new Reference(questionnaire);
+        questionnaireReference.setIdentifier(questionnaire.getIdentifier().stream().findFirst().get());
+
+        CodeableReference codeableReference = new CodeableReference(questionnaireReference);
+        codeableReferences.add(codeableReference);
+        carePlanActivityComponent.setPerformedActivity(codeableReferences);
+        activity.add(carePlanActivityComponent);
+        carePlan.setActivity(activity);
+        return carePlan;
+    }
+
+
+
+
     public static CarePlan initializeCarePlanWithAnnotationAndQuestionnaire(Annotation annotation, List<Questionnaire> questionnaires) {
         CarePlan carePlan = initializeCarePlan(questionnaires);
         List<Annotation> annotations = new ArrayList<>();

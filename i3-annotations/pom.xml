@@ -9,30 +9,35 @@
        <version>1.0.0</version>
     </parent>
 
-    <artifactId>i3-assembler</artifactId>
+    <artifactId>i3-annotations</artifactId>
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-structures-r5 -->
+
+        <!-- jakarta.enterprise -->
         <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-structures-r5</artifactId>
-            <version>6.6.2</version>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-reactive</artifactId>
+            <version>3.0.1.Final</version>
         </dependency>
 
         <dependency>
-            <groupId>org.quarkus.irccs</groupId>
-            <artifactId>i3-common</artifactId>
-           <version>1.0.0</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>4.4.1</version>
+            <scope>compile</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
+
 </project>

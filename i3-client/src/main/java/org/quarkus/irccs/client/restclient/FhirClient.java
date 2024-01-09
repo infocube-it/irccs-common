@@ -7,6 +7,8 @@ import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.BundleUtil;
+import jakarta.annotation.Nullable;
+import jakarta.ws.rs.DefaultValue;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.Bundle;
@@ -81,6 +83,10 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
                 .sort(sortSpec)
                 .returnBundle(Bundle.class)
                 .execute();
+    }
+
+    public Bundle readAll() {
+        return readAll("");
     }
 
     public OperationOutcome delete(String id) {

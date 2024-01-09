@@ -19,42 +19,42 @@ import java.lang.reflect.ParameterizedType;
 @ApplicationScoped
 @Consumes(FhirConst.FHIR_MEDIA_TYPE)
 @Produces(FhirConst.FHIR_MEDIA_TYPE)
-public abstract class GenericController<T extends IBaseResource> {
+public abstract class GenericController<T extends IBaseResource>{
     @Inject
     protected FhirClient<T> fhirClient;
 
     @GET
     public String search(@Context UriInfo searchParameters) {
         String queryParams = fhirClient.convertToQueryString(searchParameters.getQueryParameters());
-        return fhirClient.encodeResourceToString(fhirClient.getAllResources(queryParams));
+        return fhirClient.encodeResourceToString(fhirClient.read(queryParams));
     }
 
     @GET
     @Path( "/{id}")
     public String getById(@PathParam("id") String id) {
-        return fhirClient.encodeResourceToString(fhirClient.getResourceById(new IdType(fhirClient.getResourceType().getSimpleName(), id)));
+        return fhirClient.encodeResourceToString(fhirClient.read(new IdType(fhirClient.getResourceType().getSimpleName(), id)));
     }
 
     @POST
     public String create(String payload) {
         T object = fhirClient.parseResource(fhirClient.getResourceType(), payload);
 
-        IIdType idType = fhirClient.createResource(object);
+        IIdType idType = fhirClient.create(object);
         return fhirClient.encodeResourceToString(
-                fhirClient.getResourceById(idType));
+                fhirClient.read(idType));
     }
 
     @PUT
     @Path("/{id}")
     public String update(@PathParam("id") String id, String payload) {
         T object = fhirClient.parseResource(fhirClient.getResourceType(), payload);
-        return fhirClient.encodeResourceToString(fhirClient.updateResource(id, object));
+        return fhirClient.encodeResourceToString(fhirClient.update(id, object));
     }
 
     @DELETE
     @Path("/{id}")
-    public void delete(@PathParam("id") String id, @QueryParam("_cascade") DeleteCascadeModeEnum cascadeMode) {
-        fhirClient.deleteResourceById(id, cascadeMode);
+    public void delete(@PathParam("id") String id) {
+        fhirClient.delete(id);
     }
 
 }

@@ -26,12 +26,12 @@ public abstract class GenericController<T extends IBaseResource>{
     @GET
     public String search(@Context UriInfo searchParameters) {
         String queryParams = fhirClient.convertToQueryString(searchParameters.getQueryParameters());
-        return fhirClient.encodeResourceToString(fhirClient.read(queryParams));
+        return fhirClient.encodeResourceToString(fhirClient.readAll(queryParams));
     }
 
     @GET
     @Path( "/{id}")
-    public String getById(@PathParam("id") String id) {
+    public String read(@PathParam("id") String id) {
         return fhirClient.encodeResourceToString(fhirClient.read(new IdType(fhirClient.getResourceType().getSimpleName(), id)));
     }
 

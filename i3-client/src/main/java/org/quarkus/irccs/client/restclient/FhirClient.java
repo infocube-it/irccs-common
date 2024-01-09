@@ -1,5 +1,6 @@
 package org.quarkus.irccs.client.restclient;
 
+import ca.uhn.fhir.rest.api.DeleteCascadeModeEnum;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
@@ -7,12 +8,17 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
+import ca.uhn.fhir.rest.param.StringParam;
+import jakarta.ws.rs.core.UriBuilder;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.*;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
+
+import java.util.List;
+import java.util.Map;
 
 
 public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
@@ -62,7 +68,11 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
         return outcome.getId();
     }
 
-    public Bundle getAllResources() {
+    public Bundle getAllResources(String searchParameters) {
+        if(!searchParameters.isEmpty()) {
+            return searchResources(searchParameters);
+        }
+
         SortSpec sortSpec = new SortSpec(FhirQueryConst.LAST_UPDATE, SortOrderEnum.DESC);
         return iGenericClient.search()
                 .forResource(resourceType)
@@ -72,9 +82,14 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
                 .execute();
     }
 
-    public OperationOutcome deleteResourceById(String id) {
+    public OperationOutcome deleteResourceById(String id, DeleteCascadeModeEnum cascadeMode) {
+        if(cascadeMode.describeConstable().isEmpty()){
+            cascadeMode = DeleteCascadeModeEnum.NONE;
+        }
+
         MethodOutcome response = iGenericClient.delete()
                 .resourceById(new IdType(resourceType.getSimpleName(), id))
+                .cascade(cascadeMode)
                 .execute();
 
         return (OperationOutcome) response.getOperationOutcome();
@@ -95,4 +110,12 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
                 .execute();
     }
 
+    public Bundle searchResources(String searchParameters) {
+        // Execute the search and return the result
+        return iGenericClient.fetchResourceFromUrl(Bundle.class, resourceType.getSimpleName() + "?" + searchParameters);
+    }
+
+    public Class<T> getResourceType() {
+        return resourceType;
+    }
 }

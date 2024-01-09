@@ -10,6 +10,7 @@ public class FhirConst {
     public static final String RESOURCE_TYPE_CAREPLAN = "CarePlan";
     public static final String RESOURCE_TYPE_GROUP = "Group";
     public static final String PATIENT_RESOURCE_TYPE="Patient";
+    public static final String BUNDLE_RESOURCE_TYPE="Bundle";
     public static final String RESOURCE_TYPE_APPOINTMENT = "Appointment";
     public static final String FHIR_MEDIA_TYPE="application/fhir+json";
 

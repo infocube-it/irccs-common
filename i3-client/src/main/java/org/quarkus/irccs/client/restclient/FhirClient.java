@@ -85,10 +85,6 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
                 .execute();
     }
 
-    public Bundle readAll() {
-        return readAll("");
-    }
-
     public OperationOutcome delete(String id) {
 
         MethodOutcome response = iGenericClient.delete()
@@ -112,5 +108,16 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
         return resourceType;
     }
 
+    public Bundle history() {
+        return iGenericClient.history().onType(resourceType).returnBundle(Bundle.class).execute();
+    }
 
+    public Bundle historyPath(String theId) {
+        IIdType idType = new IdType(resourceType.getSimpleName(), theId);
+        return (iGenericClient.history().onInstance(idType)).returnBundle(Bundle.class).execute();
+    }
+
+    public T historyPathVersion(String theId, String versionId) {
+        return iGenericClient.read().resource(resourceType).withIdAndVersion(theId, versionId).execute();
+    }
 }

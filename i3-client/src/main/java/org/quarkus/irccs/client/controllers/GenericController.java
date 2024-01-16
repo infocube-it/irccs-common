@@ -1,20 +1,15 @@
 package org.quarkus.irccs.client.controllers;
 
-import ca.uhn.fhir.rest.api.DeleteCascadeModeEnum;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.IdType;
 import org.quarkus.irccs.client.restclient.FhirClient;
 import org.quarkus.irccs.common.constants.FhirConst;
-
-import java.lang.reflect.ParameterizedType;
-
 
 @ApplicationScoped
 @Consumes(FhirConst.FHIR_MEDIA_TYPE)
@@ -27,6 +22,29 @@ public abstract class GenericController<T extends IBaseResource>{
     public String search(@Context UriInfo searchParameters) {
         String queryParams = fhirClient.convertToQueryString(searchParameters.getQueryParameters());
         return fhirClient.encodeResourceToString(fhirClient.readAll(queryParams));
+    }
+    @GET
+    @Path("/_search")
+    public String searchPath(@Context UriInfo searchParameters) {
+        String queryParams = fhirClient.convertToQueryString(searchParameters.getQueryParameters());
+        return fhirClient.encodeResourceToString(fhirClient.readAll(queryParams));
+    }
+    @GET
+    @Path("/_history")
+    public String history() {
+        return fhirClient.encodeResourceToString(fhirClient.history());
+    }
+
+    @GET
+    @Path("{id}/_history")
+    public String historyPath(@PathParam("id") String id) {
+        return fhirClient.encodeResourceToString(fhirClient.historyPath(id));
+    }
+
+    @GET
+    @Path("{id}/_history/{version_id}")
+    public String historyPathVersion(@PathParam("id") String id, @PathParam("version_id") String versionId) {
+        return fhirClient.encodeResourceToString(fhirClient.historyPathVersion(id, versionId));
     }
 
     @GET

@@ -16,6 +16,9 @@ public class RoutingPathConst {
     public static final String ROUTING_ORGANIZATION=ROUTING_PREFIX + FhirConst.RESOURCE_TYPE_ORGANIZATION;
     public static final String ROUTING_PRACTITIONER = ROUTING_PREFIX + FhirConst.RESOURCE_TYPE_PRACTITIONER;
 
+    public static final String ROUTING_PRACTITIONER_ROLE = ROUTING_PREFIX + FhirConst.RESOURCE_TYPE_PRACTITIONER_ROLE;
+    public static final String ROUTING_CONSENT = ROUTING_PREFIX + FhirConst.RESOURCE_TYPE_CONSENT;
+
 }
 
 

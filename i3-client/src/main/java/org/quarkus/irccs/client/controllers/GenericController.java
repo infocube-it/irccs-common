@@ -55,6 +55,8 @@ public abstract class GenericController<T extends IBaseResource>{
 
     @POST
     public String create(String payload) {
+
+
         T object = fhirClient.parseResource(fhirClient.getResourceType(), payload);
 
         IIdType idType = fhirClient.create(object);

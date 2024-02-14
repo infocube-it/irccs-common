@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.UriInfo;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -75,6 +76,17 @@ public abstract class GenericController<T extends IBaseResource>{
     @Path("/{id}")
     public void delete(@PathParam("id") String id) {
         fhirClient.delete(id);
+    }
+
+    public <X extends IBaseResource> X parseResource(String obj, Class<X> clazz){
+        return fhirClient.parseResource(clazz, obj);
+    }
+    public String encodeResourceToString(T obj){
+        return fhirClient.encodeResourceToString(obj);
+    }
+    public String search(MultivaluedMap<String, String> params) {
+        String queryParams = fhirClient.convertToQueryString(params);
+        return fhirClient.encodeResourceToString(fhirClient.readAll(queryParams));
     }
 
 }

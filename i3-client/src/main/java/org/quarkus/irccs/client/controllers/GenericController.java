@@ -17,7 +17,7 @@ import org.quarkus.irccs.common.constants.FhirConst;
 @Produces(FhirConst.FHIR_MEDIA_TYPE)
 public abstract class GenericController<T extends IBaseResource>{
     @Inject
-    protected FhirClient<T> fhirClient;
+    public FhirClient<T> fhirClient;
 
     @GET
     public String search(@Context UriInfo searchParameters) {
@@ -76,17 +76,6 @@ public abstract class GenericController<T extends IBaseResource>{
     @Path("/{id}")
     public void delete(@PathParam("id") String id) {
         fhirClient.delete(id);
-    }
-
-    public <X extends IBaseResource> X parseResource(String obj, Class<X> clazz){
-        return fhirClient.parseResource(clazz, obj);
-    }
-    public String encodeResourceToString(T obj){
-        return fhirClient.encodeResourceToString(obj);
-    }
-    public String search(MultivaluedMap<String, String> params) {
-        String queryParams = fhirClient.convertToQueryString(params);
-        return fhirClient.encodeResourceToString(fhirClient.readAll(queryParams));
     }
 
 }

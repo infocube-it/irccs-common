@@ -17,7 +17,7 @@ import org.quarkus.irccs.common.constants.FhirConst;
 public abstract class GenericController<T extends IBaseResource>{
     @Inject
     @Singleton
-    FhirClient<T> fhirClient;
+    public FhirClient<T> fhirClient;
 
     @GET
     public String search(@Context UriInfo searchParameters) {

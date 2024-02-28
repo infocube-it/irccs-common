@@ -21,4 +21,6 @@ public class FhirConst {
     public static final String RESOURCE_TYPE_CONSENT= "Consent";
     public static final String RESOURCE_TYPE_HEALTHCARE_SERVICE = "HealthcareService";
     public static final String RESOURCE_TYPE_PERSON = "Person";
+    public static final String RESOURCE_TYPE_RESEARCH_SUBJECT = "ResearchSubject";
+    public static final String RESOURCE_TYPE_OBSERVATION = "Observation";
 }

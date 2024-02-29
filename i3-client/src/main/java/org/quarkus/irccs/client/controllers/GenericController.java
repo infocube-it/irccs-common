@@ -2,12 +2,13 @@ package org.quarkus.irccs.client.controllers;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.UriInfo;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.OperationOutcome;
+import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r5.model.IdType;
 import org.quarkus.irccs.client.restclient.FhirClient;
 import org.quarkus.irccs.common.constants.FhirConst;
 
@@ -16,7 +17,6 @@ import org.quarkus.irccs.common.constants.FhirConst;
 @Produces(FhirConst.FHIR_MEDIA_TYPE)
 public abstract class GenericController<T extends IBaseResource>{
     @Inject
-    @Singleton
     public FhirClient<T> fhirClient;
 
     @GET
@@ -49,24 +49,29 @@ public abstract class GenericController<T extends IBaseResource>{
     @GET
     @Path( "/{id}")
     public String read(@PathParam("id") String id) {
-        return fhirClient.encodeResourceToString(fhirClient.read(id));
+        return fhirClient.encodeResourceToString(fhirClient.read(new IdType(fhirClient.getResourceType().getSimpleName(), id)));
     }
 
     @POST
     public String create(String payload) {
-        return fhirClient.encodeResourceToString(fhirClient.create(payload));
+        T object = fhirClient.parseResource(fhirClient.getResourceType(), payload);
+
+        IIdType idType = fhirClient.create(object);
+        return fhirClient.encodeResourceToString(
+                fhirClient.read(idType));
     }
 
     @PUT
     @Path("/{id}")
     public String update(@PathParam("id") String id, String payload) {
-        return fhirClient.encodeResourceToString(fhirClient.update(id, payload));
+        T object = fhirClient.parseResource(fhirClient.getResourceType(), payload);
+        return fhirClient.encodeResourceToString(fhirClient.update(id, object));
     }
 
     @DELETE
     @Path("/{id}")
-    public OperationOutcome delete(@PathParam("id") String id) {
-        return fhirClient.delete(id);
+    public void delete(@PathParam("id") String id) {
+        fhirClient.delete(id);
     }
 
 }

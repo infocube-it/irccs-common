@@ -1,7 +1,7 @@
 package org.quarkus.irccs.common.constants;
 
 public class RoutingPathConst {
-    private static final String ROUTING_PREFIX = "/";
+    private static final String ROUTING_PREFIX = "/fhir/";
     public static final String ROUTING_BUNDLE = ROUTING_PREFIX + FhirConst.BUNDLE_RESOURCE_TYPE;
     public static final String ROUTING_PATIENT = ROUTING_PREFIX + FhirConst.PATIENT_RESOURCE_TYPE;
     public static final String ROUTING_RESEARCHSTUDY= ROUTING_PREFIX + FhirConst.RESOURCE_TYPE_RESEARCHSTUDY;

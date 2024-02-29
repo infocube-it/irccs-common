@@ -1,0 +1,51 @@
+package org.hapi.devservice.deployment;
+
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.utility.MountableFile;
+
+import java.time.Duration;
+
+public class HapiContainer extends GenericContainer<HapiContainer> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HapiContainer.class);
+    private static final String HAPI_VERSION = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.version", String.class).orElse("6.10.1");
+    private static final String HAPI_CONFIG_PATH = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.config-path", String.class).orElse("app-config.yaml");
+
+    private static String getHapiImageName() {
+        return "hapiproject/hapi:v" + HAPI_VERSION;
+    }
+
+    public HapiContainer() {
+        this(DockerImageName.parse(getHapiImageName()));
+    }
+
+    public HapiContainer(DockerImageName hapiImageName) {
+        super(hapiImageName);
+        this.withCopyFileToContainer(MountableFile.forClasspathResource(HAPI_CONFIG_PATH, 484), "/data/hapi/app-config.yaml");
+        this.withEnv("SPRING_CONFIG_LOCATION", "file:///data/hapi/app-config.yaml");
+        this.withNetwork(Network.SHARED);
+        this.withExposedPorts(8080);
+        this.withNetworkAliases("hapi");
+    }
+
+    @Override
+    protected void doStart() {
+        this.waitingFor(Wait.forLogMessage(".*Started Application.*", 1))
+                .withStartupTimeout(Duration.ofMinutes(6));
+        super.doStart();
+    }
+
+    public Integer getPort() {
+        return this.getMappedPort(8080);
+    }
+
+    public String getServerUrl() {
+        return String.format("http://%s:%d/fhir", this.getHost(), this.getPort());
+    }
+}

@@ -1,12 +1,9 @@
 package org.quarkus.irccs.authentication.exceptions;
 
 
-import lombok.Getter;
-import lombok.Setter;
 import org.quarkus.irccs.authentication.enums.AuthCodes;
 
 
-@Getter @Setter
 public class IrccsExceptions extends  RuntimeException{
     private AuthCodes type;
 
@@ -22,5 +19,6 @@ public class IrccsExceptions extends  RuntimeException{
         super(msg);
         this.type = authCodes;
     }
+
 
 }

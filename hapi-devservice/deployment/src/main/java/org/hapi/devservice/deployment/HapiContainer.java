@@ -1,6 +1,8 @@
 package org.hapi.devservice.deployment;
 
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -9,6 +11,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
+import java.lang.annotation.Documented;
 import java.time.Duration;
 
 public class HapiContainer extends GenericContainer<HapiContainer> {
@@ -25,11 +28,28 @@ public class HapiContainer extends GenericContainer<HapiContainer> {
         this(DockerImageName.parse(getHapiImageName()));
     }
 
+    /*Non utilizzato.Per i test viene creato un network proprio*/
+    public static Network networkHapi = new Network() {
+        @Override
+        public String getId() {
+            return "Qui va l'id del network irccs-docker-network";
+        }
+
+        @Override
+        public void close() {
+
+        }
+
+        @Override
+        public Statement apply(Statement statement, Description description) {
+            return null;
+        }
+    };
     public HapiContainer(DockerImageName hapiImageName) {
         super(hapiImageName);
         this.withCopyFileToContainer(MountableFile.forClasspathResource(HAPI_CONFIG_PATH, 484), "/data/hapi/app-config.yaml");
         this.withEnv("SPRING_CONFIG_LOCATION", "file:///data/hapi/app-config.yaml");
-        this.withNetwork(Network.SHARED);
+        this.withNetwork(Network.SHARED); //non è necessario, è possibile creare un nuovo network e passargli l'id del network esistente nello stack se vogliamo
         this.withExposedPorts(8080);
         this.withNetworkAliases("hapi");
     }

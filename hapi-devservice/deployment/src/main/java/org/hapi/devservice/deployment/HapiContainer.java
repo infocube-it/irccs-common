@@ -20,6 +20,8 @@ public class HapiContainer extends GenericContainer<HapiContainer> {
     private static final String HAPI_VERSION = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.version", String.class).orElse("6.10.1");
     private static final String HAPI_CONFIG_PATH = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.config-path", String.class).orElse("app-config.yaml");
 
+    private Integer fixedPort;
+
     private static String getHapiImageName() {
         return "hapiproject/hapi:v" + HAPI_VERSION;
     }
@@ -54,15 +56,23 @@ public class HapiContainer extends GenericContainer<HapiContainer> {
         this.withNetworkAliases("hapi");
     }
 
+    public HapiContainer withFixedPort(int fixedPort) {
+        this.fixedPort = fixedPort;
+        return this;
+    }
+
     @Override
     protected void doStart() {
-        this.waitingFor(Wait.forLogMessage(".*Started Application.*", 1))
+        if (fixedPort != null) {
+            this.addFixedExposedPort(fixedPort, 8080);
+        }
+        this.waitingFor(Wait.forLogMessage(".*expired searches.*", 1))
                 .withStartupTimeout(Duration.ofMinutes(6));
         super.doStart();
     }
 
     public Integer getPort() {
-        return this.getMappedPort(8080);
+        return fixedPort != null ? fixedPort : this.getMappedPort(8080);
     }
 
     public String getServerUrl() {

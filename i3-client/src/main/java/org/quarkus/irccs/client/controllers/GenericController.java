@@ -1,5 +1,6 @@
 package org.quarkus.irccs.client.controllers;
 
+import io.vertx.ext.web.RoutingContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -12,21 +13,25 @@ import org.hl7.fhir.r5.model.IdType;
 import org.quarkus.irccs.client.restclient.FhirClient;
 import org.quarkus.irccs.common.constants.FhirConst;
 
+import java.util.List;
+import java.util.Map;
+
 @ApplicationScoped
 @Consumes(FhirConst.FHIR_MEDIA_TYPE)
 @Produces(FhirConst.FHIR_MEDIA_TYPE)
 public abstract class GenericController<T extends IBaseResource>{
     @Inject
+    @Context
     public FhirClient<T> fhirClient;
 
     @GET
     public String search(@Context UriInfo searchParameters) {
-        return fhirClient.encodeResourceToString(fhirClient.readAll(searchParameters));
+        return search_Internal(searchParameters.getQueryParameters());
     }
     @GET
     @Path("/_search")
     public String searchPath(@Context UriInfo searchParameters) {
-        return fhirClient.encodeResourceToString(fhirClient.readAll(searchParameters));
+        return searchPath_Internal(searchParameters.getQueryParameters());
     }
     @GET
     @Path("/_history")
@@ -74,4 +79,14 @@ public abstract class GenericController<T extends IBaseResource>{
         fhirClient.delete(id);
     }
 
+    public String search_Internal(Map<String, List<String>> searchParameters) {
+        return fhirClient.encodeResourceToString(fhirClient.readAll(searchParameters));
+    }
+    public String searchPath_Internal(Map<String, List<String>> searchParameters) {
+        return fhirClient.encodeResourceToString(fhirClient.readAll(searchParameters));
+    }
+
+    public FhirClient<T> getFhirClient() {
+        return fhirClient;
+    }
 }

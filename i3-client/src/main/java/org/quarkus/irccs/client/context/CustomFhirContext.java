@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 
 public class CustomFhirContext {
-    protected final IParser iParser;
+    public final IParser iParser;
 
     protected CustomFhirContext() {
         this.iParser = null;

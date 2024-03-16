@@ -4,8 +4,10 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.*;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.BundleUtil;
+import io.vertx.core.MultiMap;
 import jakarta.annotation.Nullable;
 import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.UriInfo;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -16,7 +18,10 @@ import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 import org.quarkus.irccs.common.constants.FhirQueryConst;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
@@ -69,11 +74,11 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
         return outcome.getId();
     }
 
-    public Bundle readAll(UriInfo parameters) {
+    public Bundle readAll(Map<String, List<String>> parameters) {
         return iGenericClient.search()
                 .forResource(resourceType)
                 .totalMode(SearchTotalModeEnum.ACCURATE) //ritorna sempre il campo total nella ricerca
-                .whereMap(parameters.getQueryParameters())
+                .whereMap(parameters)
                 .returnBundle(Bundle.class)
                 .execute();
     }
@@ -85,16 +90,6 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
                 .execute();
 
         return (OperationOutcome) response.getOperationOutcome();
-    }
-
-    public List<T> searchList(String searchParameters) {
-        Bundle object = iGenericClient.fetchResourceFromUrl(Bundle.class, resourceType.getSimpleName() + "?" + searchParameters);
-        return BundleUtil.toListOfResourcesOfType(fhirContext, object, resourceType);
-    }
-    
-    public Bundle search(String searchParameters) {
-        // Execute the search and return the result
-        return iGenericClient.fetchResourceFromUrl(Bundle.class, resourceType.getSimpleName() + "?" + searchParameters);
     }
 
     public Class<T> getResourceType() {
@@ -113,4 +108,15 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
     public T historyPathVersion(String theId, String versionId) {
         return iGenericClient.read().resource(resourceType).withIdAndVersion(theId, versionId).execute();
     }
+
+    public List<T> searchList(String searchParameters) {
+        Bundle object = iGenericClient.fetchResourceFromUrl(Bundle.class, resourceType.getSimpleName() + "?" + searchParameters);
+        return BundleUtil.toListOfResourcesOfType(fhirContext, object, resourceType);
+    }
+
+    public Bundle search(String searchParameters) {
+        // Execute the search and return the result
+        return iGenericClient.fetchResourceFromUrl(Bundle.class, resourceType.getSimpleName() + "?" + searchParameters);
+    }
+
 }

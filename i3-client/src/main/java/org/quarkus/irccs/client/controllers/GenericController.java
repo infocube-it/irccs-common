@@ -10,6 +10,7 @@ import jakarta.ws.rs.core.UriInfo;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r5.model.IdType;
+import org.quarkus.irccs.annotations.interfaces.SyncAuthFlow;
 import org.quarkus.irccs.client.restclient.FhirClient;
 import org.quarkus.irccs.common.constants.FhirConst;
 
@@ -19,6 +20,7 @@ import java.util.Map;
 @ApplicationScoped
 @Consumes(FhirConst.FHIR_MEDIA_TYPE)
 @Produces(FhirConst.FHIR_MEDIA_TYPE)
+@SyncAuthFlow
 public abstract class GenericController<T extends IBaseResource>{
     @Inject
     @Context

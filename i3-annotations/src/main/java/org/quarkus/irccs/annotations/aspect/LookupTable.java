@@ -437,6 +437,7 @@ public class LookupTable {
                     newParams[0] = fhirClient.encodeResourceToString(resource);
                 } else {
                     newParams = new Object[2];
+                    newParams[0] = context.getParameters()[0];
                     newParams[1] = fhirClient.encodeResourceToString(resource);
                 }
             } else if((method.equals("search_Internal") || method.equals("searchPath_Internal") || method.contains("history")) && !isAdmin) {

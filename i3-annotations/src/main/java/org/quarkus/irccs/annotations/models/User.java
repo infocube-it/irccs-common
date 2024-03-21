@@ -46,10 +46,10 @@ public class User {
             user.setSurname(practitioner.getName().get(0).getFamily());
             user.setEmail(practitioner.getTelecom().stream().filter(x -> x.getSystem().equals(ContactPoint.ContactPointSystem.EMAIL)).toList().get(0).getValue());
             user.setPhoneNumber(practitioner.getTelecom().stream().filter(x -> x.getSystem().equals(ContactPoint.ContactPointSystem.PHONE)).toList().get(0).getValue());
-            if(null != psw){
+            if(null != orgReq){
                 user.setOrganizationRequest(List.of(orgReq));
             }
-            if(null != orgReq){
+            if(null != psw){
                 user.setPassword(psw);
             }
         return user;

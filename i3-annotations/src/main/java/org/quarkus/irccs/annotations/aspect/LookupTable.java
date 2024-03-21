@@ -81,7 +81,7 @@ public class LookupTable {
                 return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
             }
         }
-        return null;
+        return payload;
     }
 
     private org.hl7.fhir.r5.model.Group addIdentifierIdGroup(Group authGroup, org.hl7.fhir.r5.model.Group fhirGroup, FhirClient<org.hl7.fhir.r5.model.Group> fhirClient) {

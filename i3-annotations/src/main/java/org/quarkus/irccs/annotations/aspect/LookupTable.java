@@ -404,11 +404,15 @@ public class LookupTable {
             } catch (NullPointerException e) {
                 LOG.info("Not ADMIN request.");
             }
-            HashMap<String, HashMap<String, List<String>>> groupsId = new ObjectMapper().readValue(jwt.getClaim("groupsId").toString(), HashMap.class);
-            List<String> groupsIds = new ArrayList<>(groupsId.entrySet().stream()
-                    .filter(entry -> entry.getValue().containsKey(resourceName))
-                    .filter(entry -> entry.getValue().get(resourceName).contains(method.contains("search") ? "search" : method))
-                    .map(Map.Entry::getKey).toList());
+
+            List<String> groupsIds = new ArrayList<>();
+            if(jwt.containsClaim("groupsId")){
+                HashMap<String, HashMap<String, List<String>>> groupsId = new ObjectMapper().readValue(jwt.getClaim("groupsId").toString(), HashMap.class);
+                 groupsIds = new ArrayList<>(groupsId.entrySet().stream()
+                        .filter(entry -> entry.getValue().containsKey(resourceName))
+                        .filter(entry -> entry.getValue().get(resourceName).contains(method.contains("search") ? "search" : method))
+                        .map(Map.Entry::getKey).toList());
+            }
 
             if(method.equals("create") || method.equals("update")){
                 String payload = method.equals("update") ? (String) context.getParameters()[1] : (String) context.getParameters()[0] ;

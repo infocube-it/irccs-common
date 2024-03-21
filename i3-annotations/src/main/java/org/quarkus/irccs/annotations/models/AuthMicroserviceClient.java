@@ -8,7 +8,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @RegisterRestClient(configKey="auth-microservice-client")
 public interface AuthMicroserviceClient {
 
-    @Path("/users/signup")
+    @Path("/users/create")
     @POST
     Response createUser(@HeaderParam("Authorization") String jwtToken, User user);
     @Path("/users")

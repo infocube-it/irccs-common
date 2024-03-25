@@ -9,10 +9,7 @@ import jakarta.ws.rs.ForbiddenException;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.Extension;
-import org.hl7.fhir.r5.model.Identifier;
-import org.hl7.fhir.r5.model.Practitioner;
-import org.hl7.fhir.r5.model.StringType;
+import org.hl7.fhir.r5.model.*;
 import org.quarkus.irccs.annotations.models.AuthMicroserviceClient;
 import org.quarkus.irccs.annotations.models.Group;
 import org.quarkus.irccs.annotations.models.User;
@@ -46,7 +43,11 @@ public class LookupTable {
     }
 
     protected String intercept(FhirClient<?> fhirClient, InvocationContext context) {
+        try {
             getOrSetGroupIds(fhirClient, context);
+        } catch (RuntimeException e){
+            return e.getMessage();
+        }
         try {
             return syncAuth(checkAccess((String) context.proceed(), fhirClient, context), fhirClient, context);
         } catch (ForbiddenException e) {
@@ -417,6 +418,21 @@ public class LookupTable {
             if(method.equals("create") || method.equals("update")){
                 String payload = method.equals("update") ? (String) context.getParameters()[1] : (String) context.getParameters()[0] ;
                 IBaseResource resource = fhirClient.parseResource(resourceType, payload);
+                if(resourceName.equals("group")){
+                   String groupName = (String) resourceType.getMethod("getName").invoke(resource);
+                   if(authClient.getAllGroups(groupName).getStatus() == 200){
+                       throw new RuntimeException("Group already exists");
+                   }
+                } else if (resourceName.equals("practitioner")){
+                    List<ContactPoint> emails =  (List<ContactPoint>) resourceType.getMethod("getTelecom").invoke(resource);
+                    if(emails.size() > 0) {
+                        String email = emails.get(0).getValue();
+                        if(authClient.getAllUsers(email).getStatus() == 200){
+                            throw new RuntimeException("Practitioner already exists");
+                        }
+                    }
+                }
+
                 groupsIds.add("ac1041bb-731f-452f-92c5-e549752af05b");
                 List<Extension> getExtensions = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "password");
                 if(getExtensions.size() > 0){

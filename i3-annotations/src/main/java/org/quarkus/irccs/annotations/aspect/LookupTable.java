@@ -420,14 +420,14 @@ public class LookupTable {
                 IBaseResource resource = fhirClient.parseResource(resourceType, payload);
                 if(resourceName.equals("group")){
                    String groupName = (String) resourceType.getMethod("getName").invoke(resource);
-                   if(authClient.getAllGroups(groupName).getStatus() == 200){
+                   if(authClient.getAllGroups("Bearer " + jwt.getRawToken(), groupName).getStatus() == 200){
                        throw new RuntimeException("Group already exists");
                    }
                 } else if (resourceName.equals("practitioner")){
                     List<ContactPoint> emails =  (List<ContactPoint>) resourceType.getMethod("getTelecom").invoke(resource);
                     if(emails.size() > 0) {
                         String email = emails.get(0).getValue();
-                        if(authClient.getAllUsers(email).getStatus() == 200){
+                        if(authClient.getAllUsers("Bearer " + jwt.getRawToken(), email).getStatus() == 200){
                             throw new RuntimeException("Practitioner already exists");
                         }
                     }

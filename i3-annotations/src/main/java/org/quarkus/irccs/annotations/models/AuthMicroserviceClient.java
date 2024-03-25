@@ -26,8 +26,8 @@ public interface AuthMicroserviceClient {
     Response createGroup(@HeaderParam("Authorization") String jwtToken, Group group);
 
     @GET
-    Response getAllUsers(@QueryParam("email") @DefaultValue("") String email);
+    Response getAllUsers(@HeaderParam("Authorization") String jwtToken, @QueryParam("email") @DefaultValue("") String email);
 
     @GET
-    Response getAllGroups(@QueryParam("name") @DefaultValue("") String name);
+    Response getAllGroups(@HeaderParam("Authorization") String jwtToken, @QueryParam("name") @DefaultValue("") String name);
 }

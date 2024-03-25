@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.interceptor.InvocationContext;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -46,7 +48,7 @@ public class LookupTable {
         try {
             getOrSetGroupIds(fhirClient, context);
         } catch (RuntimeException e){
-            return e.getMessage();
+            throw new BadRequestException();
         }
         try {
             return syncAuth(checkAccess((String) context.proceed(), fhirClient, context), fhirClient, context);
@@ -420,14 +422,17 @@ public class LookupTable {
                 IBaseResource resource = fhirClient.parseResource(resourceType, payload);
                 if(resourceName.equals("group")){
                    String groupName = (String) resourceType.getMethod("getName").invoke(resource);
-                   if(authClient.getAllGroups("Bearer " + jwt.getRawToken(), groupName).getStatus() == 200){
+                    Response getGroup = authClient.getAllUsers("Bearer " + jwt.getRawToken(), groupName);
+                    if(getGroup.hasEntity()){
                        throw new RuntimeException("Group already exists");
                    }
                 } else if (resourceName.equals("practitioner")){
                     List<ContactPoint> emails =  (List<ContactPoint>) resourceType.getMethod("getTelecom").invoke(resource);
+                    emails.stream().filter(email -> email.getSystem().equals(ContactPoint.ContactPointSystem.EMAIL)).toList();
                     if(emails.size() > 0) {
                         String email = emails.get(0).getValue();
-                        if(authClient.getAllUsers("Bearer " + jwt.getRawToken(), email).getStatus() == 200){
+                        Response getUser = authClient.getAllUsers("Bearer " + jwt.getRawToken(), email);
+                        if(getUser.hasEntity()){
                             throw new RuntimeException("Practitioner already exists");
                         }
                     }

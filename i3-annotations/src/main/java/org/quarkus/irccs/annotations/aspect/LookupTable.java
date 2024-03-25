@@ -434,12 +434,15 @@ public class LookupTable {
                     extension.setValue(new StringType(groupsIds.get(i)));
                     extensions.add(extension);
                 }
-                resourceType.getMethod("setExtension", List.class).invoke(resource, extensions);
                 newParams = null;
                 if(method.equals("create")){
+                    resourceType.getMethod("setExtension", List.class).invoke(resource, extensions);
                     newParams = new Object[1];
                     newParams[0] = fhirClient.encodeResourceToString(resource);
                 } else {
+                    if(!isAdmin){
+                        resourceType.getMethod("setExtension", List.class).invoke(resource, extensions);
+                    }
                     newParams = new Object[2];
                     newParams[0] = context.getParameters()[0];
                     newParams[1] = fhirClient.encodeResourceToString(resource);

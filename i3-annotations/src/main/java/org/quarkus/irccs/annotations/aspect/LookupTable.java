@@ -50,8 +50,10 @@ public class LookupTable {
         try {
             return syncAuth(checkAccess((String) context.proceed(), fhirClient, context), fhirClient, context);
         } catch (ForbiddenException e) {
+            LOG.debug(e.getMessage());
             throw new ForbiddenException();
         } catch (Exception e){
+            LOG.debug(e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -418,14 +420,14 @@ public class LookupTable {
                 String payload = method.equals("update") ? (String) context.getParameters()[1] : (String) context.getParameters()[0] ;
                 IBaseResource resource = fhirClient.parseResource(resourceType, payload);
                 groupsIds.add("ac1041bb-731f-452f-92c5-e549752af05b");
-                List<Extension> getExtensions = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "password");
-                if(getExtensions.size() > 0){
-                    this.psw = getExtensions.get(0).getValueStringType().asStringValue();
+                List<Extension> extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "password");
+                if(extensionList.size() > 0){
+                    this.psw = extensionList.get(0).getValueStringType().asStringValue();
                 }
                 resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "organizationRequest");
-                getExtensions = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "organizationRequest");
-                if(getExtensions.size() > 0){
-                    this.orgReq = getExtensions.get(0).getValueStringType().asStringValue();
+                extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "organizationRequest");
+                if(extensionList.size() > 0){
+                    this.orgReq = extensionList.get(0).getValueStringType().asStringValue();
                 }
                 List<Extension> extensions = new ArrayList<>();
                 for (int i = 0; i < groupsIds.size(); i++) {

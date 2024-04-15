@@ -18,6 +18,9 @@ public class User {
     private Boolean enabled;
     private String phoneNumber;
     private List<String> organizationRequest;
+    private List<String> structure;
+    private List<String> role;
+    private List<String> unitName;
 
     public static UserRepresentation toUserRepresentation(User user){
         UserRepresentation userRepresentation = new UserRepresentation();
@@ -30,13 +33,16 @@ public class User {
         userRepresentation.setId(user.getId());
         userRepresentation.setAttributes(new HashMap<>(){{
             put("organizationRequest", user.getOrganizationRequest());
+            put("unitName", user.getUnitName());
+            put("role", user.getRole());
+            put("structure", user.getStructure());
             put("phoneNumber", List.of(user.getPhoneNumber()));
         }});
 
         return userRepresentation;
     }
 
-    public static User fromPractitioner(Practitioner practitioner, String psw, String orgReq){
+    public static User fromPractitioner(Practitioner practitioner, String psw, String orgReq, String unitName, String role, String structure){
         User user = new User();
             if(practitioner.getIdentifier().size() > 0 && null != practitioner.getIdentifier().get(0).getValue()){
                 user.setId(practitioner.getIdentifier().get(0).getValue());
@@ -48,6 +54,18 @@ public class User {
             user.setPhoneNumber(practitioner.getTelecom().stream().filter(x -> x.getSystem().equals(ContactPoint.ContactPointSystem.PHONE)).toList().get(0).getValue());
             if(null != orgReq){
                 user.setOrganizationRequest(List.of(orgReq));
+            }
+            if(null != orgReq){
+                user.setOrganizationRequest(List.of(orgReq));
+            }
+            if(null != role){
+                user.setRole(List.of(role));
+            }
+            if(null != unitName){
+                user.setUnitName(List.of(unitName));
+            }
+            if(null != structure){
+                user.setStructure(List.of(structure));
             }
             if(null != psw){
                 user.setPassword(psw);
@@ -127,6 +145,30 @@ public class User {
 
     public void setOrganizationRequest(List<String> organizationRequest) {
         this.organizationRequest = organizationRequest;
+    }
+
+    public List<String> getStructure() {
+        return structure;
+    }
+
+    public void setStructure(List<String> structure) {
+        this.structure = structure;
+    }
+
+    public List<String> getRole() {
+        return role;
+    }
+
+    public void setRole(List<String> role) {
+        this.role = role;
+    }
+
+    public List<String> getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(List<String> unitName) {
+        this.unitName = unitName;
     }
 
     @Override

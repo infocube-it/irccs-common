@@ -38,6 +38,9 @@ public class LookupTable {
 
     private String psw = null;
     private String orgReq = null;
+    private String structure = null;
+    private String unitName = null;
+    private String role = null;
 
     @Inject
     public LookupTable(@RestClient AuthMicroserviceClient authClient, JsonWebToken jwt) {
@@ -74,7 +77,7 @@ public class LookupTable {
 
         if(fhirClient.getResourceType().equals(Practitioner.class)){
             Practitioner practitioner = (Practitioner) fhirClient.parseResource(fhirClient.getResourceType(), payload);
-            User user = User.fromPractitioner(practitioner, this.psw, this.orgReq);
+            User user = User.fromPractitioner(practitioner, this.psw, this.orgReq, this.unitName, this.role, this.structure );
             if(null == user.getId()){
                 User authUser = authClient.createUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
                 return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
@@ -428,6 +431,18 @@ public class LookupTable {
                 extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "organizationRequest");
                 if(extensionList.size() > 0){
                     this.orgReq = extensionList.get(0).getValueStringType().asStringValue();
+                }
+                extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "role");
+                if(extensionList.size() > 0){
+                    this.role = extensionList.get(0).getValueStringType().asStringValue();
+                }
+                extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "structure");
+                if(extensionList.size() > 0){
+                    this.structure = extensionList.get(0).getValueStringType().asStringValue();
+                }
+                extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "unitName");
+                if(extensionList.size() > 0){
+                    this.unitName = extensionList.get(0).getValueStringType().asStringValue();
                 }
                 List<Extension> extensions = new ArrayList<>();
                 for (int i = 0; i < groupsIds.size(); i++) {

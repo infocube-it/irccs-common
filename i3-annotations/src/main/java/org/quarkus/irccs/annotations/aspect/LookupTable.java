@@ -427,22 +427,24 @@ public class LookupTable {
                 if(extensionList.size() > 0){
                     this.psw = extensionList.get(0).getValueStringType().asStringValue();
                 }
-                resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "organizationRequest");
-                extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "organizationRequest");
-                if(extensionList.size() > 0){
-                    this.orgReq = extensionList.get(0).getValueStringType().asStringValue();
+                List<Extension> orgReqExt = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "organizationRequest");
+                if(orgReqExt.size() > 0){
+                    this.orgReq = orgReqExt.get(0).getValueStringType().asStringValue();
                 }
-                extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "role");
-                if(extensionList.size() > 0){
-                    this.role = extensionList.get(0).getValueStringType().asStringValue();
+                List<Extension> roleExt = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "role");
+                LOG.info("role from Extensions: " + roleExt);
+                if(roleExt.size() > 0){
+                    this.role = roleExt.get(0).getValueStringType().asStringValue();
                 }
-                extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "structure");
-                if(extensionList.size() > 0){
-                    this.structure = extensionList.get(0).getValueStringType().asStringValue();
+                List<Extension> structureExt = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "structure");
+                LOG.info("structure from Extensions: " + structureExt);
+                if(structureExt.size() > 0){
+                    this.structure = structureExt.get(0).getValueStringType().asStringValue();
                 }
-                extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "unitName");
-                if(extensionList.size() > 0){
-                    this.unitName = extensionList.get(0).getValueStringType().asStringValue();
+                List<Extension> unitNameExt = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "unitName");
+                LOG.info("unitName from Extensions: " + unitNameExt);
+                if(unitNameExt.size() > 0){
+                    this.unitName = unitNameExt.get(0).getValueStringType().asStringValue();
                 }
                 List<Extension> extensions = new ArrayList<>();
                 for (int i = 0; i < groupsIds.size(); i++) {

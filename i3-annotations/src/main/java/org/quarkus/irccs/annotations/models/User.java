@@ -1,6 +1,7 @@
 package org.quarkus.irccs.annotations.models;
 
 
+import io.quarkus.logging.Log;
 import org.hl7.fhir.r5.model.ContactPoint;
 import org.hl7.fhir.r5.model.Practitioner;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -55,9 +56,6 @@ public class User {
             if(null != orgReq){
                 user.setOrganizationRequest(List.of(orgReq));
             }
-            if(null != orgReq){
-                user.setOrganizationRequest(List.of(orgReq));
-            }
             if(null != role){
                 user.setRole(List.of(role));
             }
@@ -70,6 +68,7 @@ public class User {
             if(null != psw){
                 user.setPassword(psw);
             }
+        System.out.println(user.toString());
         return user;
     }
 /*
@@ -182,6 +181,9 @@ public class User {
                 ", enabled=" + enabled +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", organizationRequest=" + organizationRequest +
+                ", structure=" + structure +
+                ", role=" + role +
+                ", unitName=" + unitName +
                 '}';
     }
 }

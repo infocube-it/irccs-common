@@ -18,6 +18,8 @@ import org.quarkus.irccs.annotations.models.Group;
 import org.quarkus.irccs.annotations.models.User;
 import org.quarkus.irccs.client.controllers.GenericController;
 import org.quarkus.irccs.client.restclient.FhirClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ import static io.quarkus.arc.ComponentsProvider.LOG;
 @ApplicationScoped
 @SuppressWarnings("unchecked")
 public class LookupTable {
+
+    private final static Logger LOG = LoggerFactory.getLogger(LookupTable.class);
 
     private final AuthMicroserviceClient authClient;
     private final JsonWebToken jwt;

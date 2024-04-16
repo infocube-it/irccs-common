@@ -476,11 +476,14 @@ public class LookupTable {
                     newParams[1] = fhirClient.encodeResourceToString(resource);
                 }
             } else if((method.equals("search_Internal") || method.equals("searchPath_Internal") || method.contains("history")) && !isAdmin) {
+                String practitionerId = jwt.getClaim("sub");
                 Map<String, List<String>> params = deepCopy((Map<String, List<String>>) context.getParameters()[0]);
                 List<String> param = new ArrayList<>();
                 param.add(String.join(" or group-id eq ", groupsIds.stream().map(x -> '"' + x + '"').toList()));
                 param.set(0, "group-id eq " + param.get(0));
-                param.set(0, param.get(0) + " or " + String.join(" or ", groupsIds.stream().map(x -> "identifier eq \"" + x + "\"").toList()));
+                if(!practitionerId.isEmpty()){
+                    param.set(0, param.get(0) + " or identifier eq " + practitionerId);
+                }
                 params.put("_filter", param);
                 System.out.println(params);
                 newParams = new Object[1];

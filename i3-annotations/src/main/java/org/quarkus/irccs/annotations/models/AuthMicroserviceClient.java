@@ -16,7 +16,7 @@ public interface AuthMicroserviceClient {
     Response updateUser(@HeaderParam("Authorization") String jwtToken, User user);
     @Path("/users")
     @DELETE
-    Response deleteUser(@HeaderParam("Authorization") String jwtToken, @PathParam("id") String id);
+    Response deleteUser(@HeaderParam("Authorization") String jwtToken, String id);
     @Path("/groups")
     @PUT
     Response updateGroup(@HeaderParam("Authorization") String jwtToken, Group group);
@@ -24,4 +24,8 @@ public interface AuthMicroserviceClient {
     @Path("/groups")
     @POST
     Response createGroup(@HeaderParam("Authorization") String jwtToken, Group group);
+
+    @Path("/groups")
+    @DELETE
+    Response deleteGroup(@HeaderParam("Authorization") String jwtToken, String id);
 }

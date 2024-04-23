@@ -66,29 +66,43 @@ public class LookupTable {
     }
 
     private String syncAuth(String payload, FhirClient<?> fhirClient, InvocationContext context) {
-        if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update"))) return payload;
+        if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update") || context.getMethod().getName().equals("delete"))) return payload;
         if(fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class)){
             org.hl7.fhir.r5.model.Group fhirGroup = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), payload);
             if(!fhirGroup.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)) return payload;
-            Group group = Group.groupFromFhirGroup(fhirGroup, fhirClient);
-            if(null == group.getId()){
-                Group authGroup = authClient.createGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
-                return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
+            if(context.getMethod().getName().equals("delete")){
+                if(fhirGroup.getIdentifier().size() > 0){
+                    String groupIdentifier = fhirGroup.getIdentifier().get(0).getValue();
+                    authClient.deleteGroup("Bearer " + jwt.getRawToken(), groupIdentifier);
+                }
             } else {
-                Group authGroup = authClient.updateGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
-                return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
+                Group group = Group.groupFromFhirGroup(fhirGroup, fhirClient);
+                if(null == group.getId()){
+                    Group authGroup = authClient.createGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
+                    return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
+                } else {
+                    Group authGroup = authClient.updateGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
+                    return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
+                }
             }
         }
 
         if(fhirClient.getResourceType().equals(Practitioner.class)){
             Practitioner practitioner = (Practitioner) fhirClient.parseResource(fhirClient.getResourceType(), payload);
-            User user = User.fromPractitioner(practitioner, this.psw, this.orgReq, this.unitName, this.role, this.structure );
-            if(null == user.getId()){
-                User authUser = authClient.createUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
-                return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
+            if(context.getMethod().getName().equals("delete")){
+                if(practitioner.getIdentifier().size() > 0){
+                    String userIdentifier = practitioner.getIdentifier().get(0).getValue();
+                    authClient.deleteUser("Bearer " + jwt.getRawToken(), userIdentifier);
+                }
             } else {
-                User authUser = authClient.updateUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
-                return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
+                User user = User.fromPractitioner(practitioner, this.psw, this.orgReq, this.unitName, this.role, this.structure);
+                if (null == user.getId()) {
+                    User authUser = authClient.createUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
+                    return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
+                } else {
+                    User authUser = authClient.updateUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
+                    return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
+                }
             }
         }
         return payload;

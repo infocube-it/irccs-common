@@ -46,14 +46,24 @@ public class LookupTable {
     private String unitName = null;
     private String role = null;
 
+    private String identifier = null;
+
     @Inject
     public LookupTable(@RestClient AuthMicroserviceClient authClient, JsonWebToken jwt) {
         this.authClient = authClient;
         this.jwt = jwt;
     }
 
-    protected String intercept(FhirClient<?> fhirClient, InvocationContext context) {
+    protected String intercept(FhirClient<?> fhirClient, InvocationContext context) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
             getOrSetGroupIds(fhirClient, context);
+
+        if(context.getMethod().getName().equals("delete") && (fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class) || fhirClient.getResourceType().equals(Practitioner.class)) ){
+            List<Identifier> identifiers = (List<Identifier>) fhirClient.getResourceType().getMethod("getIdentifier").invoke(fhirClient.read((String) context.getParameters()[0]));
+            if(identifiers.size() > 0){
+                identifier = identifiers.get(0).getValue();
+            }
+        }
+
         try {
             return syncAuth(checkAccess((String) context.proceed(), fhirClient, context), fhirClient, context);
         } catch (ForbiddenException e) {
@@ -69,13 +79,11 @@ public class LookupTable {
         if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update") || context.getMethod().getName().equals("delete"))) return payload;
         if(fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class)){
             if(context.getMethod().getName().equals("delete")){
-                String resourceId = (String) context.getParameters()[0];
-                org.hl7.fhir.r5.model.Group fhirGroupDel = (org.hl7.fhir.r5.model.Group) fhirClient.read(resourceId);
                 LOG.info("Delete Request for a Group... ");
-                if(fhirGroupDel.getIdentifier().size() > 0){
+                if(identifier != null){
                     LOG.info("Asking to delete Keycloak Group...");
-                    String groupIdentifier = fhirGroupDel.getIdentifier().get(0).getValue();
-                    authClient.deleteGroup("Bearer " + jwt.getRawToken(), groupIdentifier);
+                    authClient.deleteGroup("Bearer " + jwt.getRawToken(), identifier);
+                    identifier = null;
                 }
                 return payload;
             }
@@ -94,13 +102,11 @@ public class LookupTable {
         if(fhirClient.getResourceType().equals(Practitioner.class)){
 
             if(context.getMethod().getName().equals("delete")){
-                String resourceId = (String) context.getParameters()[0];
-                org.hl7.fhir.r5.model.Practitioner practitionerDel = (org.hl7.fhir.r5.model.Practitioner) fhirClient.read(resourceId);
                 LOG.info("Delete Request for a Practitioner... ");
-                if(practitionerDel.getIdentifier().size() > 0){
+                if(identifier != null){
                     LOG.info("Asking to delete Keycloak Practitioner...");
-                    String practitionerIdentifier = practitionerDel.getIdentifier().get(0).getValue();
-                    authClient.deleteUser("Bearer " + jwt.getRawToken(), practitionerIdentifier);
+                    authClient.deleteUser("Bearer " + jwt.getRawToken(), identifier);
+                    identifier = null;
                 }
                 return payload;
             }

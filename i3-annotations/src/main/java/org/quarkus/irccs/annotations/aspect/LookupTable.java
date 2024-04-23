@@ -66,14 +66,15 @@ public class LookupTable {
     }
 
     private String syncAuth(String payload, FhirClient<?> fhirClient, InvocationContext context) {
-        if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update") || context.getMethod().getName().equals("delete"))) return payload;
+        LOG.info(payload);
+        if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update"))) return payload;
         if(fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class)){
             org.hl7.fhir.r5.model.Group fhirGroup = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), payload);
             if(!fhirGroup.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)) return payload;
             if(context.getMethod().getName().equals("delete")){
-                LOG.debug("Delete Request for a Group... ");
+                LOG.info("Delete Request for a Group... ");
                 if(fhirGroup.getIdentifier().size() > 0){
-                    LOG.debug("Asking to delete Keycloak Group...");
+                    LOG.info("Asking to delete Keycloak Group...");
                     String groupIdentifier = fhirGroup.getIdentifier().get(0).getValue();
                     authClient.deleteGroup("Bearer " + jwt.getRawToken(), groupIdentifier);
                 }

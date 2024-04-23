@@ -71,7 +71,9 @@ public class LookupTable {
             org.hl7.fhir.r5.model.Group fhirGroup = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), payload);
             if(!fhirGroup.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)) return payload;
             if(context.getMethod().getName().equals("delete")){
+                LOG.debug("Delete Request for a Group... ");
                 if(fhirGroup.getIdentifier().size() > 0){
+                    LOG.debug("Asking to delete Keycloak Group...");
                     String groupIdentifier = fhirGroup.getIdentifier().get(0).getValue();
                     authClient.deleteGroup("Bearer " + jwt.getRawToken(), groupIdentifier);
                 }
@@ -90,7 +92,9 @@ public class LookupTable {
         if(fhirClient.getResourceType().equals(Practitioner.class)){
             Practitioner practitioner = (Practitioner) fhirClient.parseResource(fhirClient.getResourceType(), payload);
             if(context.getMethod().getName().equals("delete")){
+                LOG.debug("Delete Request for a Practitioner... ");
                 if(practitioner.getIdentifier().size() > 0){
+                    LOG.debug("Asking to delete Keycloak User...");
                     String userIdentifier = practitioner.getIdentifier().get(0).getValue();
                     authClient.deleteUser("Bearer " + jwt.getRawToken(), userIdentifier);
                 }

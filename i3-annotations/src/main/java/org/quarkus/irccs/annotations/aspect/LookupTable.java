@@ -66,40 +66,46 @@ public class LookupTable {
     }
 
     private String syncAuth(String payload, FhirClient<?> fhirClient, InvocationContext context) {
-        LOG.info(payload);
-        if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update"))) return payload;
+        if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update") || context.getMethod().getName().equals("delete"))) return payload;
         if(fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class)){
-            org.hl7.fhir.r5.model.Group fhirGroup = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), payload);
-            if(!fhirGroup.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)) return payload;
             if(context.getMethod().getName().equals("delete")){
+                String resourceId = (String) context.getParameters()[0];
+                org.hl7.fhir.r5.model.Group fhirGroupDel = (org.hl7.fhir.r5.model.Group) fhirClient.read(resourceId);
                 LOG.info("Delete Request for a Group... ");
-                if(fhirGroup.getIdentifier().size() > 0){
+                if(fhirGroupDel.getIdentifier().size() > 0){
                     LOG.info("Asking to delete Keycloak Group...");
-                    String groupIdentifier = fhirGroup.getIdentifier().get(0).getValue();
+                    String groupIdentifier = fhirGroupDel.getIdentifier().get(0).getValue();
                     authClient.deleteGroup("Bearer " + jwt.getRawToken(), groupIdentifier);
                 }
+                return payload;
+            }
+            org.hl7.fhir.r5.model.Group fhirGroup = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), payload);
+            if(!fhirGroup.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)) return payload;
+            Group group = Group.groupFromFhirGroup(fhirGroup, fhirClient);
+            if(null == group.getId()){
+                Group authGroup = authClient.createGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
+                return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
             } else {
-                Group group = Group.groupFromFhirGroup(fhirGroup, fhirClient);
-                if(null == group.getId()){
-                    Group authGroup = authClient.createGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
-                    return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
-                } else {
-                    Group authGroup = authClient.updateGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
-                    return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
-                }
+                Group authGroup = authClient.updateGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
+                return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
             }
         }
 
         if(fhirClient.getResourceType().equals(Practitioner.class)){
-            Practitioner practitioner = (Practitioner) fhirClient.parseResource(fhirClient.getResourceType(), payload);
+
             if(context.getMethod().getName().equals("delete")){
-                LOG.debug("Delete Request for a Practitioner... ");
-                if(practitioner.getIdentifier().size() > 0){
-                    LOG.debug("Asking to delete Keycloak User...");
-                    String userIdentifier = practitioner.getIdentifier().get(0).getValue();
-                    authClient.deleteUser("Bearer " + jwt.getRawToken(), userIdentifier);
+                String resourceId = (String) context.getParameters()[0];
+                org.hl7.fhir.r5.model.Practitioner practitionerDel = (org.hl7.fhir.r5.model.Practitioner) fhirClient.read(resourceId);
+                LOG.info("Delete Request for a Practitioner... ");
+                if(practitionerDel.getIdentifier().size() > 0){
+                    LOG.info("Asking to delete Keycloak Practitioner...");
+                    String practitionerIdentifier = practitionerDel.getIdentifier().get(0).getValue();
+                    authClient.deleteUser("Bearer " + jwt.getRawToken(), practitionerIdentifier);
                 }
-            } else {
+                return payload;
+            }
+
+            Practitioner practitioner = (Practitioner) fhirClient.parseResource(fhirClient.getResourceType(), payload);
                 User user = User.fromPractitioner(practitioner, this.psw, this.orgReq, this.unitName, this.role, this.structure);
                 if (null == user.getId()) {
                     User authUser = authClient.createUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
@@ -108,7 +114,6 @@ public class LookupTable {
                     User authUser = authClient.updateUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
                     return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
                 }
-            }
         }
         return payload;
     }

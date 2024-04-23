@@ -56,8 +56,8 @@ public class LookupTable {
             getOrSetGroupIds(fhirClient, context);
 
         if(context.getMethod().getName().equals("delete") && (fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class) || fhirClient.getResourceType().equals(Practitioner.class)) ){
-            LOG.info(Arrays.toString(context.getParameters()));
-            List<Identifier> identifiers = (List<Identifier>) fhirClient.getResourceType().getMethod("getIdentifier").invoke(fhirClient.read((String) context.getParameters()[1]));
+            LOG.debug(Arrays.toString(context.getParameters()));
+            List<Identifier> identifiers = (List<Identifier>) fhirClient.getResourceType().getMethod("getIdentifier").invoke(fhirClient.read((String) context.getParameters()[0]));
             if(identifiers.size() > 0){
                 identifier = identifiers.get(0).getValue();
             }

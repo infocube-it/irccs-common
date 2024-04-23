@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.interceptor.InvocationContext;
 import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -83,7 +84,6 @@ public class LookupTable {
                 if(identifier != null){
                     LOG.info("Asking to delete Keycloak Group...");
                     authClient.deleteGroup("Bearer " + jwt.getRawToken(), identifier);
-                    identifier = null;
                 }
                 return payload;
             }
@@ -106,7 +106,6 @@ public class LookupTable {
                 if(identifier != null){
                     LOG.info("Asking to delete Keycloak Practitioner...");
                     authClient.deleteUser("Bearer " + jwt.getRawToken(), identifier);
-                    identifier = null;
                 }
                 return payload;
             }

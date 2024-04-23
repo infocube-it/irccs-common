@@ -69,10 +69,11 @@ public class LookupTable {
         if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update"))) return payload;
         if(fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class)){
             org.hl7.fhir.r5.model.Group fhirGroup = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), payload);
+            if(!fhirGroup.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)) return payload;
             Group group = Group.groupFromFhirGroup(fhirGroup, fhirClient);
             if(null == group.getId()){
                 Group authGroup = authClient.createGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
-                 return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
+                return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
             } else {
                 Group authGroup = authClient.updateGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
                 return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));

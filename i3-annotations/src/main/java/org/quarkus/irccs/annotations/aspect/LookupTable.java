@@ -23,10 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import static io.quarkus.arc.ComponentsProvider.LOG;
@@ -59,7 +56,8 @@ public class LookupTable {
             getOrSetGroupIds(fhirClient, context);
 
         if(context.getMethod().getName().equals("delete") && (fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class) || fhirClient.getResourceType().equals(Practitioner.class)) ){
-            List<Identifier> identifiers = (List<Identifier>) fhirClient.getResourceType().getMethod("getIdentifier").invoke(fhirClient.read((String) context.getParameters()[0]));
+            LOG.info(Arrays.toString(context.getParameters()));
+            List<Identifier> identifiers = (List<Identifier>) fhirClient.getResourceType().getMethod("getIdentifier").invoke(fhirClient.read((String) context.getParameters()[1]));
             if(identifiers.size() > 0){
                 identifier = identifiers.get(0).getValue();
             }

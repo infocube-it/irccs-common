@@ -459,7 +459,6 @@ public class LookupTable {
                 List<Extension> extensions = new ArrayList<>();
                 if(extensionList.size() > 0){
                     this.psw = extensionList.get(0).getValueStringType().asStringValue();
-                    extensions.add(extensionList.get(0));
                 }
                 List<Extension> orgReqExt = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "organizationRequest");
                 if(orgReqExt.size() > 0){
@@ -509,9 +508,6 @@ public class LookupTable {
                 List<String> param = new ArrayList<>();
                 param.add(String.join(" or group-id eq ", groupsIds.stream().map(x -> '"' + x + '"').toList()));
                 param.set(0, "group-id eq " + param.get(0));
-                if(!practitionerId.isEmpty()){
-                    param.set(0, param.get(0) + " or identifier eq " + practitionerId);
-                }
                 params.put("_filter", param);
                 System.out.println(params);
                 newParams = new Object[1];

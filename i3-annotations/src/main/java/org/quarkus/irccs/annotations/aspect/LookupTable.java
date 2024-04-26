@@ -1,5 +1,7 @@
 package org.quarkus.irccs.annotations.aspect;
 
+import ca.uhn.fhir.parser.DataFormatException;
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -10,14 +12,13 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.Extension;
-import org.hl7.fhir.r5.model.Identifier;
-import org.hl7.fhir.r5.model.Practitioner;
-import org.hl7.fhir.r5.model.StringType;
+import org.hl7.fhir.r5.model.*;
 import org.quarkus.irccs.annotations.models.AuthMicroserviceClient;
 import org.quarkus.irccs.annotations.models.Group;
 import org.quarkus.irccs.annotations.models.User;
 import org.quarkus.irccs.client.controllers.GenericController;
+import org.quarkus.irccs.client.exception.BaseServerResponseExceptionMapper;
+import org.quarkus.irccs.client.exception.DataFormatExceptionMapper;
 import org.quarkus.irccs.client.restclient.FhirClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,6 @@ public class LookupTable {
             getOrSetGroupIds(fhirClient, context);
 
         if(context.getMethod().getName().equals("delete") && (fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class) || fhirClient.getResourceType().equals(Practitioner.class)) ){
-            LOG.debug(Arrays.toString(context.getParameters()));
             List<Identifier> identifiers = (List<Identifier>) fhirClient.getResourceType().getMethod("getIdentifier").invoke(fhirClient.read((String) context.getParameters()[0]));
             if(identifiers.size() > 0){
                 identifier = identifiers.get(0).getValue();
@@ -454,6 +454,26 @@ public class LookupTable {
             if(method.equals("create") || method.equals("update")){
                 String payload = method.equals("update") ? (String) context.getParameters()[1] : (String) context.getParameters()[0] ;
                 IBaseResource resource = fhirClient.parseResource(resourceType, payload);
+
+                if(resourceType.equals(Practitioner.class)) {
+                    Practitioner practitioner = (Practitioner) resource;
+                    Bundle bundle = fhirClient.search("email=" + practitioner.getTelecom().stream().filter(x -> x.getSystem().equals(ContactPoint.ContactPointSystem.EMAIL)).toList().get(0).getValue());
+                    if(bundle.getTotal() > 0){
+                        throw new DataFormatException("Conflict: User with same username was found.");
+                    }
+                }
+
+                if(resourceType.equals(org.hl7.fhir.r5.model.Group.class)) {
+                    org.hl7.fhir.r5.model.Group group = (org.hl7.fhir.r5.model.Group) resource;
+                    if(group.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)){
+                        Bundle bundle = fhirClient.search("name=" + group.getName());
+                        if(bundle.getTotal() > 0){
+                            throw new DataFormatException("Conflict: Group with same name was found.");
+                        }
+                    }
+                }
+
+
                 groupsIds.add("ac1041bb-731f-452f-92c5-e549752af05b");
                 List<Extension> extensionList = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "password");
                 List<Extension> extensions = new ArrayList<>();

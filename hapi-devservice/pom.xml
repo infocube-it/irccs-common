@@ -89,12 +89,12 @@
   <distributionManagement>
     <snapshotRepository>
       <id>nexus-snapshot</id>
-      <url>http://nexus.infocube.it:8089/repository/irccs-common-snapshot/</url>
+      <url>http://nexus.infocube.it/repository/irccs-common-snapshot/</url>
     </snapshotRepository>
 
     <repository>
       <id>nexus-release</id>
-      <url>http://nexus.infocube.it:8089/repository/irccs-common-release/</url>
+      <url>http://nexus.infocube.it/repository/irccs-common-release/</url>
     </repository>
   </distributionManagement>
 </project>

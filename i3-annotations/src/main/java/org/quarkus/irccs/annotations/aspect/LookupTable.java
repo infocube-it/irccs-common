@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -466,7 +468,7 @@ public class LookupTable {
                 if(resourceType.equals(org.hl7.fhir.r5.model.Group.class) && method.equals("create")) {
                     org.hl7.fhir.r5.model.Group group = (org.hl7.fhir.r5.model.Group) resource;
                     if(group.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)){
-                        Bundle bundle = fhirClient.search("name=" + group.getName());
+                        Bundle bundle = fhirClient.search(URLEncoder.encode("name=" + group.getName(), StandardCharsets.UTF_8));
                         if(bundle.getTotal() > 0){
                             throw new DataFormatException("Nome del gruppo già in uso");
                         }

@@ -468,7 +468,7 @@ public class LookupTable {
                 if(resourceType.equals(org.hl7.fhir.r5.model.Group.class) && method.equals("create")) {
                     org.hl7.fhir.r5.model.Group group = (org.hl7.fhir.r5.model.Group) resource;
                     if(group.getType().getDisplay().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER.getDisplay())){
-                        Bundle bundle = fhirClient.search(URLEncoder.encode("name=" + group.getName(), StandardCharsets.UTF_8));
+                        Bundle bundle = fhirClient.search(URLEncoder.encode("name=" + group.getName(), StandardCharsets.UTF_8).replace("+", "%20"));
                         if(bundle.getTotal() > 0){
                             throw new DataFormatException("Nome del gruppo già in uso");
                         }

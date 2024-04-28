@@ -86,7 +86,7 @@ public class LookupTable {
                 return payload;
             }
             org.hl7.fhir.r5.model.Group fhirGroup = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), payload);
-            if(!fhirGroup.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)) return payload;
+            if(!fhirGroup.getType().getDisplay().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER.getDisplay())) return payload;
             Group group = Group.groupFromFhirGroup(fhirGroup, fhirClient);
             if(null == group.getId()){
                 Group authGroup = authClient.createGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
@@ -467,7 +467,7 @@ public class LookupTable {
 
                 if(resourceType.equals(org.hl7.fhir.r5.model.Group.class) && method.equals("create")) {
                     org.hl7.fhir.r5.model.Group group = (org.hl7.fhir.r5.model.Group) resource;
-                    if(group.getType().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER)){
+                    if(group.getType().getDisplay().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER.getDisplay())){
                         Bundle bundle = fhirClient.search(URLEncoder.encode("name=" + group.getName(), StandardCharsets.UTF_8));
                         if(bundle.getTotal() > 0){
                             throw new DataFormatException("Nome del gruppo già in uso");

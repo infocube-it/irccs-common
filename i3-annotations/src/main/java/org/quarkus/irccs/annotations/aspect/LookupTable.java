@@ -470,8 +470,7 @@ public class LookupTable {
                     if(group.getType().getDisplay().equals(org.hl7.fhir.r5.model.Group.GroupType.PRACTITIONER.getDisplay())){
                         Map<String, List<String>> searchParameters = new HashMap<>();
                         searchParameters.put("name", List.of(group.getName()));
-                        String bundlePayload = ((GenericController<?>) context.getTarget()).search_Internal(searchParameters);
-                        Bundle bundle = fhirClient.parseResource(Bundle.class, bundlePayload);
+                        Bundle bundle = fhirClient.readAll(searchParameters);
                         if(bundle.getTotal() > 0){
                             boolean nameUsed = bundle.getEntry().stream().filter(el -> ((org.hl7.fhir.r5.model.Group) el.getResource()).getName().toLowerCase().equals(group.getName().toLowerCase())).toList().size() > 0;
                             if(nameUsed) throw new DataFormatException("Nome del gruppo già in uso");

@@ -535,7 +535,7 @@ public class LookupTable {
                 param.add(String.join(" or group-id eq ", groupsIds.stream().map(x -> '"' + x + '"').toList()));
                 param.set(0, "group-id eq " + param.get(0));
                 if(!practitionerId.isEmpty()){
-                    param.set(0, param.get(0) + " or identifier eq " + practitionerId);
+                    param.set(0, param.get(0) + " or identifier eq \"" + practitionerId + "\"");
                 }
                 LOG.info(Arrays.toString(param.toArray()));
                 params.put("_filter", param);

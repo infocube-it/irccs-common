@@ -66,10 +66,11 @@ public class LookupTable {
         try {
             return syncAuth(checkAccess((String) context.proceed(), fhirClient, context), fhirClient, context);
         } catch (ForbiddenException e) {
-            LOG.debug(e.getMessage());
+            System.out.println(e.getMessage());
+            LOG.error(e.getMessage());
             throw new ForbiddenException();
         } catch (Exception e){
-            LOG.debug(e.getMessage());
+            LOG.error(e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -580,9 +581,18 @@ public class LookupTable {
             LOG.info("No identifier on the resource.");
         }
 
+        LOG.info("identifier is: " + identifier);
+        System.out.println(identifier);
+
         boolean isGranted = extensions.stream().map(x -> x.getValueStringType().toString()).anyMatch(value -> groupsIds.stream().anyMatch(value::contains)) || (identifier != null && identifier.equals(practitionerId)) || isAdmin;
 
+        System.out.println(extensions);
+        System.out.println(groupsIds);
+        System.out.println(identifier);
+
+
         if(!isGranted){
+            System.out.println("schizzobello");
             throw new ForbiddenException();
         }
 

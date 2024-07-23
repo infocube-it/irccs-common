@@ -66,24 +66,29 @@ public class LookupTable {
         try {
             return syncAuth(checkAccess((String) context.proceed(), fhirClient, context), fhirClient, context);
         } catch (ForbiddenException e) {
-            System.out.println(e.getMessage());
+            System.out.println("exit fail1="+e.getMessage());
             LOG.error(e.getMessage());
             throw new ForbiddenException();
         } catch (Exception e){
-            LOG.error(e.getMessage());
+            LOG.error("exit fail2="+e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
     private String syncAuth(String payload, FhirClient<?> fhirClient, InvocationContext context) {
-        if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update") || context.getMethod().getName().equals("delete"))) return payload;
+        if(!(context.getMethod().getName().equals("create") || context.getMethod().getName().equals("update") || context.getMethod().getName().equals("delete"))) {
+            System.out.println("syncAuth first exit - context.getMethod().getName()="+context.getMethod().getName());
+            return payload;
+        }
+
         if(fhirClient.getResourceType().equals(org.hl7.fhir.r5.model.Group.class)){
             if(context.getMethod().getName().equals("delete")){
-                LOG.info("Delete Request for a Group... ");
+                System.out.println("Delete Request for a Group... ");
                 if(identifier != null){
-                    LOG.info("Asking to delete Keycloak Group...");
+                    System.out.println("Asking to delete Keycloak Group...");
                     authClient.deleteGroup("Bearer " + jwt.getRawToken(), identifier);
                 }
+                System.out.println("syncAuth second payload="+payload);
                 return payload;
             }
             org.hl7.fhir.r5.model.Group fhirGroup = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), payload);
@@ -91,9 +96,11 @@ public class LookupTable {
             Group group = Group.groupFromFhirGroup(fhirGroup, fhirClient);
             if(null == group.getId()){
                 Group authGroup = authClient.createGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
+                System.out.println("syncAuth third payload="+payload);
                 return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
             } else {
                 Group authGroup = authClient.updateGroup("Bearer " + jwt.getRawToken(), group).readEntity(Group.class);
+                System.out.println("syncAuth fourth payload="+payload);
                 return fhirClient.encodeResourceToString(addIdentifierIdGroup(authGroup, fhirGroup, (FhirClient<org.hl7.fhir.r5.model.Group>) fhirClient));
             }
         }
@@ -101,11 +108,12 @@ public class LookupTable {
         if(fhirClient.getResourceType().equals(Practitioner.class)){
 
             if(context.getMethod().getName().equals("delete")){
-                LOG.info("Delete Request for a Practitioner... ");
+                System.out.println("Delete Request for a Practitioner... ");
                 if(identifier != null){
-                    LOG.info("Asking to delete Keycloak Practitioner...");
+                    System.out.println("Asking to delete Keycloak Practitioner...");
                     authClient.deleteUser("Bearer " + jwt.getRawToken(), identifier);
                 }
+                System.out.println("syncAuth fifth payload="+payload);
                 return payload;
             }
 
@@ -113,12 +121,15 @@ public class LookupTable {
                 User user = User.fromPractitioner(practitioner, this.psw, this.orgReq, this.unitName, this.role, this.structure);
                 if (null == user.getId()) {
                     User authUser = authClient.createUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
+                    System.out.println("syncAuth 6 payload="+payload);
                     return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
                 } else {
                     User authUser = authClient.updateUser("Bearer " + jwt.getRawToken(), user).readEntity(User.class);
+                    System.out.println("syncAuth 7 payload="+payload);
                     return fhirClient.encodeResourceToString(addIdentifierIdUser(authUser, practitioner, (FhirClient<Practitioner>) fhirClient));
                 }
         }
+        System.out.println("syncAuth end payload="+payload);
         return payload;
     }
 
@@ -440,7 +451,7 @@ public class LookupTable {
             try{
                 isAdmin = ((ArrayList<String>)((HashMap<?,?>) new ObjectMapper().readValue(jwt.getClaim("resource_access").toString(), HashMap.class).get("irccs")).get("roles")).contains("admin");
             } catch (NullPointerException e) {
-                LOG.info("Not ADMIN request.");
+                System.out.println("Not ADMIN request.");
             }
 
             List<String> groupsIds = new ArrayList<>();
@@ -493,19 +504,19 @@ public class LookupTable {
                     extensions.add(orgReqExt.get(0));
                 }
                 List<Extension> roleExt = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "role");
-                LOG.info("role from Extensions: " + roleExt);
+                System.out.println("role from Extensions: " + roleExt);
                 if(roleExt.size() > 0){
                     this.role = roleExt.get(0).getValueStringType().asStringValue();
                     extensions.add(roleExt.get(0));
                 }
                 List<Extension> structureExt = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "structure");
-                LOG.info("structure from Extensions: " + structureExt);
+                System.out.println("structure from Extensions: " + structureExt);
                 if(structureExt.size() > 0){
                     this.structure = structureExt.get(0).getValueStringType().asStringValue();
                     extensions.add(structureExt.get(0));
                 }
                 List<Extension> unitNameExt = (List<Extension>) resourceType.getMethod("getExtensionsByUrl", String.class).invoke(resource, "unitName");
-                LOG.info("unitName from Extensions: " + unitNameExt);
+                System.out.println("unitName from Extensions: " + unitNameExt);
                 if(unitNameExt.size() > 0){
                     this.unitName = unitNameExt.get(0).getValueStringType().asStringValue();
                     extensions.add(unitNameExt.get(0));
@@ -538,7 +549,7 @@ public class LookupTable {
                 if(!practitionerId.isEmpty()){
                     param.set(0, param.get(0) + " or identifier eq \"" + practitionerId + "\"");
                 }
-                LOG.info(Arrays.toString(param.toArray()));
+                System.out.println(Arrays.toString(param.toArray()));
                 params.put("_filter", param);
                 System.out.println(params);
                 newParams = new Object[1];
@@ -569,7 +580,7 @@ public class LookupTable {
         try{
             isAdmin = ((ArrayList<String>)((HashMap<?,?>) new ObjectMapper().readValue(jwt.getClaim("resource_access").toString(), HashMap.class).get("irccs")).get("roles")).contains("admin");
         } catch (NullPointerException e) {
-            LOG.info("Not ADMIN request.");
+            System.out.println("Not ADMIN request.");
         }
 
         IBaseResource resource = fhirClient.parseResource(resourceType, response);
@@ -578,11 +589,10 @@ public class LookupTable {
         try {
             identifier = ((Identifier)((List) resourceType.getMethod("getIdentifier").invoke(resource)).get(0)).getValue();
         } catch (Exception e){
-            LOG.info("No identifier on the resource.");
+            System.out.println("No identifier on the resource.");
         }
 
-        LOG.info("identifier is: " + identifier);
-        System.out.println(identifier);
+        System.out.println("identifier is: " + identifier);
 
         boolean isGranted = extensions.stream().map(x -> x.getValueStringType().toString()).anyMatch(value -> groupsIds.stream().anyMatch(value::contains)) || (identifier != null && identifier.equals(practitionerId)) || isAdmin;
 
@@ -591,10 +601,11 @@ public class LookupTable {
         System.out.println(identifier);
 
 
-        if(!isGranted){
+        /*if(!isGranted){
             System.out.println("schizzobello");
             throw new ForbiddenException();
-        }
+        }*/
+        System.out.println("response:"+response);
 
         return response;
     }

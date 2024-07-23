@@ -27,6 +27,8 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 import static io.quarkus.arc.ComponentsProvider.LOG;
+import static org.quarkus.irccs.common.constants.FhirConst.RESOURCE_TYPE_QUESTIONNAIRE;
+import static org.quarkus.irccs.common.constants.FhirConst.RESOURCE_TYPE_QUESTIONNAIRE_RESPONSE;
 
 @ApplicationScoped
 @SuppressWarnings("unchecked")
@@ -540,7 +542,10 @@ public class LookupTable {
                     newParams[0] = context.getParameters()[0];
                     newParams[1] = fhirClient.encodeResourceToString(resource);
                 }
-            } else if((method.equals("search_Internal") || method.equals("searchPath_Internal") || method.contains("history")) && !isAdmin) {
+            } else if((method.equals("search_Internal") || method.equals("searchPath_Internal") || method.contains("history")) 
+                    && !isAdmin
+                    && (!resourceName.toLowerCase().contains(RESOURCE_TYPE_QUESTIONNAIRE.toLowerCase()) && !resourceName.toLowerCase().contains(RESOURCE_TYPE_QUESTIONNAIRE_RESPONSE.toLowerCase()))) {
+                System.out.println("resourceName="+resourceName);
                 String practitionerId = jwt.getClaim("sub");
                 Map<String, List<String>> params = deepCopy((Map<String, List<String>>) context.getParameters()[0]);
                 List<String> param = new ArrayList<>();

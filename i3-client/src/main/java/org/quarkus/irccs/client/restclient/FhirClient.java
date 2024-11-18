@@ -79,6 +79,7 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
                 .forResource(resourceType)
                 .totalMode(SearchTotalModeEnum.ACCURATE) //ritorna sempre il campo total nella ricerca
                 .whereMap(parameters)
+                .cacheControl(CacheControlDirective.noCache())
                 .returnBundle(Bundle.class)
                 .execute();
     }

@@ -4,22 +4,12 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.*;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.BundleUtil;
-import io.vertx.core.MultiMap;
-import jakarta.annotation.Nullable;
-import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.core.MultivaluedMap;
-import jakarta.ws.rs.core.UriInfo;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r5.model.Bundle;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.OperationOutcome;
+import org.hl7.fhir.r5.model.*;
 import org.quarkus.irccs.client.context.CustomFhirContext;
 import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
-import org.quarkus.irccs.common.constants.FhirQueryConst;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +17,7 @@ import java.util.Map;
 public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
     private final int queryLimit;
     private final IGenericClient iGenericClient;
-    private final Class<T> resourceType;
+    private Class<T> resourceType;
 
     private final FhirContext fhirContext;
 
@@ -119,5 +109,4 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
         // Execute the search and return the result
         return iGenericClient.fetchResourceFromUrl(Bundle.class, resourceType.getSimpleName() + "?" + searchParameters);
     }
-
 }

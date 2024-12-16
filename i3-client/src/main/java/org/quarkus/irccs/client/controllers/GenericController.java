@@ -1,12 +1,16 @@
 package org.quarkus.irccs.client.controllers;
 
+import ca.uhn.fhir.rest.annotation.Delete;
+import jakarta.decorator.Decorator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.UriInfo;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.IdType;
 import org.quarkus.irccs.client.restclient.FhirClient;
 import org.quarkus.irccs.common.constants.FhirConst;
@@ -14,7 +18,6 @@ import org.quarkus.irccs.common.constants.FhirConst;
 import java.util.List;
 import java.util.Map;
 
-@ApplicationScoped
 @Consumes(FhirConst.FHIR_MEDIA_TYPE)
 @Produces(FhirConst.FHIR_MEDIA_TYPE)
 public abstract class GenericController<T extends IBaseResource>{
@@ -75,6 +78,20 @@ public abstract class GenericController<T extends IBaseResource>{
     @Path("/{id}")
     public void delete(@PathParam("id") String id) {
         fhirClient.delete(id);
+    }
+
+    @DELETE
+    @Path("/$bulk_delete")
+    public String bulkDelete(@Context UriInfo searchParameters) {
+        MultivaluedMap<String, String> queryParams = searchParameters.getQueryParameters();
+
+        List<Bundle.BundleEntryComponent> entries = this.fhirClient.readAll(queryParams).getEntry();
+        entries.forEach(entry -> {
+            String resourceId = entry.getResource().getIdPart();
+            this.fhirClient.delete(resourceId);
+        });
+
+        return "Ok";
     }
 
     public String search_Internal(Map<String, List<String>> searchParameters) {

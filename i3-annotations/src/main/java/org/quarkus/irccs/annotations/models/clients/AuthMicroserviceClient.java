@@ -1,8 +1,10 @@
-package org.quarkus.irccs.annotations.models;
+package org.quarkus.irccs.annotations.models.clients;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import org.quarkus.irccs.annotations.models.Group;
+import org.quarkus.irccs.annotations.models.User;
 
 @Path("/fhir/auth")
 @RegisterRestClient(configKey="auth-microservice-client")

@@ -6,6 +6,7 @@ import org.quarkus.irccs.client.restclient.FhirClient;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -14,6 +15,13 @@ public class Group {
     private String name;
     private List<String> members;
     private List<String> organizations;
+    private String organizationId;
+    private Boolean isOrganization = false;
+    private String parentGroupId = "";
+    private String groupId = "";
+    private boolean isDataManager = false;
+    private boolean isOrgAdmin = false;
+
 
     public String getId() {
         return id;
@@ -47,6 +55,54 @@ public class Group {
         this.organizations = organizations;
     }
 
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
+
+    public Boolean getOrganization() {
+        return isOrganization;
+    }
+
+    public void setOrganization(Boolean organization) {
+        isOrganization = organization;
+    }
+
+    public String getParentGroupId() {
+        return parentGroupId;
+    }
+
+    public void setParentGroupId(String parentGroupId) {
+        this.parentGroupId = parentGroupId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public boolean isDataManager() {
+        return isDataManager;
+    }
+
+    public void setDataManager(boolean dataManager) {
+        isDataManager = dataManager;
+    }
+
+    public boolean isOrgAdmin() {
+        return isOrgAdmin;
+    }
+
+    public void setOrgAdmin(boolean orgAdmin) {
+        isOrgAdmin = orgAdmin;
+    }
+
     public static Group groupFromFhirGroup(org.hl7.fhir.r5.model.Group fhirGroup, FhirClient<?> fhirClient){
         Group group = new Group();
         if(fhirGroup.getIdentifier().size() > 0 && null != fhirGroup.getIdentifier().get(0).getValue()){
@@ -67,6 +123,29 @@ public class Group {
 
         return group;
     }
+
+
+    public static Group groupFromOrganization(Organization organization){
+        Group group = new Group();
+
+        // If there's a secondary Identifier in the FHIR, we already created the group.
+        if(!organization.getIdentifier().isEmpty()){
+            Optional<String> value = organization.getIdentifier().stream()
+                    .filter(identifier -> identifier.getUse() == Identifier.IdentifierUse.SECONDARY)
+                    .map(Identifier::getValue) // Extracts the value of the identifier
+                    .findFirst(); // Retrieves the first matching element, wrapped in an Optional
+
+            value.ifPresent(
+                    group::setId
+            );
+        }
+
+        group.setOrganizationId(organization.getIdPart());
+        group.setName(organization.getName());
+        group.setOrganization(true);
+        return group;
+    }
+
 
     private static Map<String, String> extractExtension(DomainResource resource){
         return resource.getExtension().stream()

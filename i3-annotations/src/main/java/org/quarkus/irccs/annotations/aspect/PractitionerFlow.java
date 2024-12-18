@@ -68,14 +68,15 @@ public class PractitionerFlow extends Flow {
     @Override
     public String update() throws Exception {
         // We get the payload, parse it, and save it in a response variable:
-        org.hl7.fhir.r5.model.Group group = (org.hl7.fhir.r5.model.Group) fhirClient.parseResource(fhirClient.getResourceType(), (String) context.getParameters()[1]);
+        Practitioner practitioner = (Practitioner) fhirClient.parseResource(fhirClient.getResourceType(), (String) context.getParameters()[1]);
         // We add the id manually
-        group.setId((String) context.getParameters()[0]);
+        practitioner.setId((String) context.getParameters()[0]);
         // We create a Group from the organization data
-        Group keycloakGroup = Group.groupFromFhirGroup(group, fhirClient);
+        User user = User.fromPractitioner(practitioner, null, null, null, null, null);
+        user.setEnabled(true);
         // We then try to update the keycloak group of the organization
         try{
-            authClient.updateGroup("Bearer " + jwt.getRawToken(), keycloakGroup);
+            authClient.updateUser("Bearer " + jwt.getRawToken(), user);
         } catch (ClientWebApplicationException e){
             // If we don't succeed then we return an error
             throw e;
@@ -88,9 +89,9 @@ public class PractitionerFlow extends Flow {
     @Override
     public String delete() throws Exception {
         // We get the id from the delete request and we read the organization resource:
-        org.hl7.fhir.r5.model.Group group = (org.hl7.fhir.r5.model.Group) fhirClient.read((String) context.getParameters()[0]);
+        Practitioner practitioner = (Practitioner) fhirClient.read((String) context.getParameters()[0]);
         // We get the KeycloakGroupId associated with the organization.
-        String keycloakGroupId = group.getIdentifier().stream()
+        String keycloakPractitionerId = practitioner.getIdentifier().stream()
                 .filter(id -> id.getUse() == Identifier.IdentifierUse.SECONDARY)
                 .findFirst()
                 .map(Identifier::getValue)
@@ -98,7 +99,7 @@ public class PractitionerFlow extends Flow {
 
         // We try to delete the keycloak group associated with the organization.
         try{
-            authClient.deleteGroup("Bearer " + jwt.getRawToken(), keycloakGroupId).readEntity(String.class);
+            authClient.deleteUser("Bearer " + jwt.getRawToken(), keycloakPractitionerId).readEntity(String.class);
         } catch (ClientWebApplicationException e){
             // If we don't succeed then we return an error
             throw e;

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.interceptor.InvocationContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.hl7.fhir.r5.model.Extension;
-import org.hl7.fhir.r5.model.Identifier;
-import org.hl7.fhir.r5.model.Practitioner;
-import org.hl7.fhir.r5.model.Resource;
+import org.hl7.fhir.r5.model.*;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.quarkus.irccs.annotations.models.Group;
 import org.quarkus.irccs.annotations.models.User;
@@ -38,32 +35,37 @@ public class PractitionerFlow extends Flow {
         String role =  getExtensionValue(fhirPractitioner, "role");
         String structure =  getExtensionValue(fhirPractitioner, "structure");
         super.create();
-        fhirPractitioner =  (Practitioner) fhirClient.parseResource(fhirClient.getResourceType(), (String) context.proceed());
+        Practitioner practitioner = fhirClient.parseResource(Practitioner.class, (String) context.getParameters()[0]);
+        List<Extension> practitionerExtensionList = practitioner.getExtension();
+        practitionerExtensionList.add(new Extension("group_ids", new StringType(orgReq)));
+        practitioner.setExtension(practitionerExtensionList);
+        context.getParameters()[0] = fhirClient.encodeResourceToString(practitioner);
+        Practitioner createdPractitioner = (Practitioner) fhirClient.parseResource(fhirClient.getResourceType(), (String) context.proceed());
         // We create a Keycloak Group from the Fhir response
-        User keycloakUser = User.fromPractitioner(fhirPractitioner,psw, orgReq, unitName, role, structure);
+        User keycloakUser = User.fromPractitioner(createdPractitioner,psw, orgReq, unitName, role, structure);
         try{
             user = authClient.createUser("Bearer " + jwt.getRawToken(), keycloakUser).readEntity(User.class);
             /* The keycloak group has now been created, we'll add the ID to the FHIR Group */
             // The Id will be saved in the "Identifier" Fhir property as "SECONDARY" (The FIRST one being the actual FHIR ID).
-            fhirPractitioner.setIdentifier(List.of(new Identifier().setUse(Identifier.IdentifierUse.SECONDARY).setValue(user.getId())));
+            createdPractitioner.setIdentifier(List.of(new Identifier().setUse(Identifier.IdentifierUse.SECONDARY).setValue(user.getId())));
         } catch (ClientWebApplicationException e){
             // If we don't succeed then we return an error and delete the FHIR group resource
-            fhirClient.delete(fhirPractitioner.getIdPart());
+            fhirClient.delete(createdPractitioner.getIdPart());
             throw e;
         }
 
         try {
             // We now send our payload to add the keycloak ID.
-            ((FhirClient<Practitioner>) fhirClient).update(fhirPractitioner);
+            ((FhirClient<Practitioner>) fhirClient).update(createdPractitioner);
         } catch (ClientWebApplicationException e){
             // If we don't succeed then we return an error and delete the FHIR Group resource and the keycloak Group.
-            fhirClient.delete(fhirPractitioner.getIdPart());
+            fhirClient.delete(createdPractitioner.getIdPart());
             authClient.deleteGroup("Bearer " + jwt.getRawToken(), user.getId());
             throw e;
         }
 
         // If we're successful we return the organization payload.
-        return fhirClient.encodeResourceToString(fhirPractitioner);
+        return fhirClient.encodeResourceToString(createdPractitioner);
     }
     @Override
     public String update() throws Exception {

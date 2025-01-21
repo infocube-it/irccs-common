@@ -29,7 +29,12 @@ public class PractitionerFlow extends Flow {
         String psw = getExtensionValue(fhirPractitioner, "password");
         String orgReq =  getExtensionValue(fhirPractitioner, "organizationRequest");
         if(null == orgReq){
-            orgReq = new ObjectMapper().readValue((new ObjectMapper()).readValue(this.jwt.getClaim("organizations-id").toString(), List.class).get(0).toString().replace("=", ":"), Map.class).get("keycloakId").toString();
+            try{
+                orgReq = new ObjectMapper().readValue((new ObjectMapper()).readValue(this.jwt.getClaim("organizations-id").toString(), List.class).get(0).toString().replace("=", ":"), Map.class).get("keycloakId").toString();
+            }
+            // If we're here it means the user creating a Practitioner does not have an organization. Nevertheless, it has the ability to create a Practitioner: It's an Admin.
+            catch (Exception e){}
+
         }
         String unitName =  getExtensionValue(fhirPractitioner, "unitName");
         String role =  getExtensionValue(fhirPractitioner, "role");

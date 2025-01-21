@@ -44,18 +44,19 @@ public class FhirInterceptor {
         switch (resourceType) {
             case "practitioner":
                 flow = new PractitionerFlow(fhirClient, context, authClient, jwt, httpHeaders);
-                break;
+                return flow.apply();
             case "group":
                 flow = new GroupFlow(fhirClient, context, authClient, jwt, httpHeaders);
-                break;
+                return flow.apply();
             case "organization":
                 flow = new OrganizationFlow(fhirClient, context, authClient, jwt, httpHeaders, groupClient);
-                break;
+                return flow.apply();
             default:
                 flow = new Flow(fhirClient, context, authClient, jwt, httpHeaders);
-                break;
+                flow.apply();
+                return (String) context.proceed();
         }
 
-        return flow.apply();
+
     }
 }

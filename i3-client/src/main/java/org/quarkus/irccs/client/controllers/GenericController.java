@@ -80,6 +80,13 @@ public abstract class GenericController<T extends IBaseResource>{
         fhirClient.delete(id);
     }
 
+    @GET
+    @Path("/{id}/$evaluate")
+    public String evaluate(@PathParam("id") String id) {
+        return fhirClient.evaluate(id);
+    }
+
+
     @DELETE
     @Path("/$bulk_delete")
     public String bulkDelete(@Context UriInfo searchParameters) {

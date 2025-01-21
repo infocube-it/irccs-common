@@ -3,6 +3,7 @@ package org.quarkus.irccs.client.restclient;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.*;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.gclient.IOperationUntyped;
 import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -89,6 +90,12 @@ public class FhirClient<T extends IBaseResource> extends CustomFhirContext {
 
     public Bundle history() {
         return iGenericClient.history().onType(resourceType).returnBundle(Bundle.class).execute();
+    }
+
+    public String evaluate(String theId) {
+        IIdType idType = new IdType(resourceType.getSimpleName(), theId);
+        IOperationUntyped operation = iGenericClient.operation().onInstance(idType).named("$evaluate");
+        return fhirContext.newJsonParser().encodeResourceToString(operation.withNoParameters(Parameters.class).execute());
     }
 
     public Bundle historyPath(String theId) {

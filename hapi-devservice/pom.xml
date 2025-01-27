@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.quarkus.irccs</groupId>
     <artifactId>irccs-common</artifactId>
-    <version>25.2.0-SNAPSHOT</version>
+    <version>25.1.0</version>
   </parent>
   <groupId>org.hapi</groupId>
   <artifactId>hapi-devservice-parent</artifactId>

@@ -20,7 +20,7 @@ pipeline
         
         stage('Process Branch') {
             steps {
-                echo "Processing branch: ${params.BRANCH_NAME}"
+                echo "Processing branch: ${env.BRANCH_NAME}"
             }
         }
     
@@ -36,7 +36,8 @@ stage('Clone Repository') {
                 stage('Build package') {
                 steps {
                     
-		    sh('mvn clean package -DskipTests -U')
+		    //sh('mvn clean package -DskipTests -U')
+			sh('mvn clean deploy -DaltDeploymentRepository=nexus::default::http://10.99.88.21:8081/irccs-common/')
             }
         }
          

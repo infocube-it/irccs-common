@@ -37,7 +37,7 @@ stage('Clone Repository') {
                 steps {
                     
 		    //sh('mvn clean package -DskipTests -U')
-			sh('mvn clean deploy -DaltDeploymentRepository=nexus::default::http://10.99.88.21:8081/irccs-common/')
+			sh('mvn clean deploy')
             }
         }
          

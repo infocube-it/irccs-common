@@ -29,7 +29,7 @@ stage('Clone Repository') {
                 //checkout scmGit(branches: [[name: '*/develop']], extensions: [], 
                 checkout scmGit(branches: [[name: "*/${BRANCH_NAME}"]], extensions: [],
                 //checkout scmGit(branches: [[name: '*/PASTRL-337']], extensions: [], 
-                userRemoteConfigs: [[url: 'https://github.com/infocube-dev-team/irccs-common.git']])
+                userRemoteConfigs: [[url: 'git@github.com:infocube-dev-team/irccs-common.git']])
             }
         }
 

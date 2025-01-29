@@ -16,13 +16,6 @@
     <module>runtime</module>
   </modules>
   <properties>
-    <compiler-plugin.version>3.12.1</compiler-plugin.version>
-    <failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
-    <maven.compiler.release>17</maven.compiler.release>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <surefire-plugin.version>3.2.5</surefire-plugin.version>
-    <testcontainer.version>1.16.3</testcontainer.version>
   </properties>
   <dependencyManagement>
     <dependencies>

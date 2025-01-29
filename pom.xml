@@ -18,14 +18,20 @@
     </modules>
 
     <properties>
+        <maven.compiler.release>19</maven.compiler.release>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <ca.uhn.hapi.fhir.version>7.6.1</ca.uhn.hapi.fhir.version>
         <ca.uhn.hapi.fhir.r5.version>6.4.4</ca.uhn.hapi.fhir.r5.version>
         <io.quarkus.version>3.15.3</io.quarkus.version>
         <jackson-annotations.version>2.17.3</jackson-annotations.version>
         <keycloak-core.version>26.0.6</keycloak-core.version>
+        <compiler-plugin.version>3.12.1</compiler-plugin.version>
+        <failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
+        <surefire-plugin.version>3.3.1</surefire-plugin.version>
+        <testcontainer.version>1.20.4</testcontainer.version>
     </properties>
 
     <dependencyManagement>

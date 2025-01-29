@@ -23,8 +23,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ca.uhn.hapi.fhir.version>6.6.2</ca.uhn.hapi.fhir.version>
         <ca.uhn.hapi.fhir.r5.version>6.4.4</ca.uhn.hapi.fhir.r5.version>
-        <io.quarkus.version>3.8.1</io.quarkus.version>
-        <jackson-annotations.version>2.15.0</jackson-annotations.version>
+        <io.quarkus.version>3.8.6</io.quarkus.version>
+        <jackson-annotations.version>2.17.2</jackson-annotations.version>
         <keycloak-core.version>24.0.0</keycloak-core.version>
     </properties>
 

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.quarkus.irccs</groupId>
         <artifactId>irccs-common</artifactId>
-       <version>25.1.2-SNAPSHOT</version>
+       <version>25.1.2-PASTRL-402-SNAPSHOT</version>
     </parent>
 
     <artifactId>i3-common</artifactId>

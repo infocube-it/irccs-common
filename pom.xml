@@ -6,7 +6,7 @@
 
     <groupId>org.quarkus.irccs</groupId>
     <artifactId>irccs-common</artifactId>
-    <version>25.1.2-SNAPSHOT</version>
+    <version>25.1.2-PASTRL-402-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>i3-common</module>

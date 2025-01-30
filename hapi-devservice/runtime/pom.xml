@@ -8,13 +8,12 @@
     <version>25.1.2-PASTRL-402-SNAPSHOT</version>
   </parent>
   <artifactId>hapi-devservice</artifactId>
-  <name>Hapi Devservice - Runtime</name>
+  <name>Hapi Dev Service - Runtime</name>
   <dependencies>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
     </dependency>
-
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc</artifactId>

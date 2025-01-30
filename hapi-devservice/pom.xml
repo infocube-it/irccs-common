@@ -10,7 +10,7 @@
   <groupId>org.hapi</groupId>
   <artifactId>hapi-devservice-parent</artifactId>
   <packaging>pom</packaging>
-  <name>Hapi Devservice - Parent</name>
+  <name>Hapi Dev Service - Parent</name>
   <modules>
     <module>deployment</module>
     <module>runtime</module>

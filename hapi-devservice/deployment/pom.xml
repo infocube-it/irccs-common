@@ -8,7 +8,7 @@
     <version>25.1.2-PASTRL-402-SNAPSHOT</version>
   </parent>
   <artifactId>hapi-devservice-deployment</artifactId>
-  <name>Hapi Devservice - Deployment</name>
+  <name>Hapi Dev Service - Deployment</name>
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>

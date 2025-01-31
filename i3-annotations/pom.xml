@@ -20,28 +20,24 @@
 
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-keycloak-admin-client-reactive</artifactId>
+            <artifactId>quarkus-keycloak-admin-rest-client</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-keycloak-authorization</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.microprofile.rest.client</groupId>
-            <artifactId>microprofile-rest-client-api</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-jwt</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.microprofile.jwt</groupId>
-            <artifactId>microprofile-jwt-auth-api</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-jwt-build</artifactId>
         </dependency>
         <dependency>
             <groupId>org.quarkus.irccs</groupId>
             <artifactId>i3-client</artifactId>
             <version>25.1.2-PASTRL-402-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-core</artifactId>
         </dependency>
 
     </dependencies>

@@ -1,12 +1,9 @@
 package org.quarkus.irccs.annotations.models;
 
 
-import io.quarkus.logging.Log;
 import org.hl7.fhir.r5.model.ContactPoint;
 import org.hl7.fhir.r5.model.Practitioner;
-import org.keycloak.representations.idm.UserRepresentation;
 
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -23,6 +20,7 @@ public class User {
     private List<String> role;
     private List<String> unitName;
 
+    /*
     public static UserRepresentation toUserRepresentation(User user){
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setUsername(user.getEmail());
@@ -42,6 +40,7 @@ public class User {
 
         return userRepresentation;
     }
+     */
 
     public static User fromPractitioner(Practitioner practitioner, String psw, String orgReq, String unitName, String role, String structure){
         User user = new User();

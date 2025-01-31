@@ -27,7 +27,7 @@
         <ca.uhn.hapi.fhir.r5.version>6.4.4</ca.uhn.hapi.fhir.r5.version>
         <io.quarkus.version>3.15.3</io.quarkus.version>
         <jackson-annotations.version>2.17.3</jackson-annotations.version>
-        <keycloak-core.version>26.0.6</keycloak-core.version>
+        <keycloak-core.version>25.0.6</keycloak-core.version>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
         <surefire-plugin.version>3.3.1</surefire-plugin.version>
@@ -58,22 +58,32 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-resteasy-reactive</artifactId>
+                <artifactId>quarkus-rest</artifactId>
                 <version>${io.quarkus.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+                <artifactId>quarkus-rest-jackson</artifactId>
                 <version>${io.quarkus.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-keycloak-admin-client-reactive</artifactId>
+                <artifactId>quarkus-keycloak-admin-rest-client</artifactId>
                 <version>${io.quarkus.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-keycloak-authorization</artifactId>
+                <version>${io.quarkus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-smallrye-jwt</artifactId>
+                <version>${io.quarkus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-smallrye-jwt-build</artifactId>
                 <version>${io.quarkus.version}</version>
             </dependency>
             <dependency>
@@ -85,21 +95,6 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson-annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.keycloak</groupId>
-                <artifactId>keycloak-core</artifactId>
-                <version>${keycloak-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.microprofile.rest.client</groupId>
-                <artifactId>microprofile-rest-client-api</artifactId>
-                <version>3.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.microprofile.jwt</groupId>
-                <artifactId>microprofile-jwt-auth-api</artifactId>
-                <version>2.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

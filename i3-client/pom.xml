@@ -40,12 +40,12 @@
         <!-- jakarta.enterprise -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-reactive</artifactId>
+            <artifactId>quarkus-rest</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-keycloak-authorization -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+            <artifactId>quarkus-rest-jackson</artifactId>
         </dependency>
 
     </dependencies>

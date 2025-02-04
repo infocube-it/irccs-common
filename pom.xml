@@ -25,7 +25,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <ca.uhn.hapi.fhir.version>7.6.1</ca.uhn.hapi.fhir.version>
         <ca.uhn.hapi.fhir.r5.version>6.4.4</ca.uhn.hapi.fhir.r5.version>
-        <io.quarkus.version>3.15.3</io.quarkus.version>
+        <quarkus.platform.version>3.15.3</quarkus.platform.version>
         <jackson-annotations.version>2.17.3</jackson-annotations.version>
         <keycloak-core.version>25.0.6</keycloak-core.version>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
@@ -57,35 +57,18 @@
                 <version>${ca.uhn.hapi.fhir.r5.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-rest</artifactId>
-                <version>${io.quarkus.version}</version>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>${testcontainer.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-rest-jackson</artifactId>
-                <version>${io.quarkus.version}</version>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-keycloak-admin-rest-client</artifactId>
-                <version>${io.quarkus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-keycloak-authorization</artifactId>
-                <version>${io.quarkus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-smallrye-jwt</artifactId>
-                <version>${io.quarkus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-smallrye-jwt-build</artifactId>
-                <version>${io.quarkus.version}</version>
-            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-devservices-common -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>

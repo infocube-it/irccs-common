@@ -39,7 +39,16 @@
             <artifactId>i3-client</artifactId>
             <version>25.1.2-PASTRL-402-SNAPSHOT</version>
         </dependency>
-
     </dependencies>
+    <build>
+        <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+        </resource>
+        <resource>
+            <directory>config</directory>
+        </resource>
+        </resources>
+    </build>
 
 </project>

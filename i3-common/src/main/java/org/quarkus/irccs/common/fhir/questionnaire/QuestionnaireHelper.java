@@ -1,15 +1,12 @@
 package org.quarkus.irccs.common.fhir.questionnaire;
 
 import org.hl7.fhir.r5.model.Questionnaire;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.Optional;
 
 public class QuestionnaireHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(QuestionnaireHelper.class);
     public static Questionnaire adjustLinkId(Questionnaire questionnaire) {
         // last one linkId
         int latestParentId = 1;
@@ -25,7 +22,7 @@ public class QuestionnaireHelper {
                     return  Integer.compare(Integer.parseInt(a.getLinkId()), Integer.parseInt(b.getLinkId()));
                 }
             }catch (Exception e) {
-                log.error(e.getMessage(),e);
+                //FIXME
             }
 
             return -1;

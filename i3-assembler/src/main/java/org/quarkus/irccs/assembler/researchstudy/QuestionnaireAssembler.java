@@ -2,7 +2,12 @@ package org.quarkus.irccs.assembler.researchstudy;
 
 
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r5.model.Coding;
+import org.hl7.fhir.r5.model.Enumerations;
+import org.hl7.fhir.r5.model.IdType;
+import org.hl7.fhir.r5.model.Identifier;
+import org.hl7.fhir.r5.model.Questionnaire;
+import org.hl7.fhir.r5.model.StringType;
 import org.quarkus.irccs.common.enums.QuestionnaireType;
 import org.quarkus.irccs.common.constants.FhirConst;
 import org.quarkus.irccs.common.fhir.questionnaire.QuestionnaireHelper;

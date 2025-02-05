@@ -1,20 +1,16 @@
 package org.hapi.devservice.deployment;
 
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.ContainerPort;
+import io.quarkus.runtime.LaunchMode;
+import org.testcontainers.DockerClientFactory;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 
-import org.jboss.logging.Logger;
-import org.testcontainers.DockerClientFactory;
-
-import com.github.dockerjava.api.model.Container;
-import com.github.dockerjava.api.model.ContainerPort;
-
-import io.quarkus.runtime.LaunchMode;
-
 public class ContainerLocator {
 
-    private static final Logger log = Logger.getLogger(ContainerLocator.class);
     private static final BiPredicate<ContainerPort, Integer> hasMatchingPort = (containerPort,
                                                                                 port) -> containerPort.getPrivatePort() != null &&
             containerPort.getPublicPort() != null &&
@@ -45,17 +41,10 @@ public class ContainerLocator {
             return lookup(serviceName)
                     .flatMap(container -> getMappedPort(container, port)
                             .flatMap(containerPort -> Optional.ofNullable(containerPort.getPublicPort())
-                                    .map(port -> {
-                                        final ContainerAddress containerAddress = new ContainerAddress(
-                                                container.getId(),
-                                                DockerClientFactory.instance().dockerHostIpAddress(),
-                                                containerPort.getPublicPort());
-                                        log.infof("Dev Services container found: %s (%s). Connecting to: %s.",
-                                                container.getId(),
-                                                container.getImage(),
-                                                containerAddress.getUrl());
-                                        return containerAddress;
-                                    })));
+                                    .map(port -> new ContainerAddress(
+                                            container.getId(),
+                                            DockerClientFactory.instance().dockerHostIpAddress(),
+                                            containerPort.getPublicPort()))));
         } else {
             return Optional.empty();
         }

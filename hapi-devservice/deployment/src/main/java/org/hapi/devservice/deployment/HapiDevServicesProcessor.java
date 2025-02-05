@@ -34,7 +34,7 @@ public class HapiDevServicesProcessor {
                 capturedDevServicesConfiguration.serviceName,
                 capturedDevServicesConfiguration.shared,
                 LaunchMode.current());
-        
+
         if (maybeContainerAddress.isPresent()) {
             // Container exists, reuse it
             ContainerAddress containerAddress = maybeContainerAddress.get();

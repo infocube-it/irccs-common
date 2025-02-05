@@ -3,20 +3,16 @@ package org.hapi.devservice.deployment;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-import java.lang.annotation.Documented;
 import java.time.Duration;
 
 public class HapiContainer extends GenericContainer<HapiContainer> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HapiContainer.class);
     private static final String HAPI_VERSION = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.version", String.class).orElse("6.10.1");
     private static final String HAPI_CONFIG_PATH = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.config-path", String.class).orElse("app-config.yaml");
 

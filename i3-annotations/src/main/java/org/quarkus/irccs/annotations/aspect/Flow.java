@@ -2,12 +2,14 @@ package org.quarkus.irccs.annotations.aspect;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.inject.Inject;
 import jakarta.interceptor.InvocationContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Extension;
 import org.hl7.fhir.r5.model.StringType;
+import org.jboss.logging.Logger;
 import org.quarkus.irccs.annotations.models.clients.AuthMicroserviceClient;
 import org.quarkus.irccs.client.restclient.FhirClient;
 
@@ -25,6 +27,8 @@ public class Flow {
     AuthMicroserviceClient authClient;
     JsonWebToken jwt;
 
+    @Inject
+    Logger logger;
     public Flow(FhirClient<?> fhirClient, InvocationContext context, AuthMicroserviceClient authClient, JsonWebToken jwt, HttpHeaders httpHeaders) {
         this.fhirClient = fhirClient;
         this.context = context;
@@ -39,22 +43,16 @@ public class Flow {
         String methodName = context.getMethod().getName().toLowerCase();
 
     // Here we follow different flows based on the fhir request's method
-        switch (methodName){
-            case "create":
-                return create();
-            case "read":
-                return read();
-            case "update":
-                return update();
-            case "search":
-                return search();
-            case "search_internal":
-                return search_internal();
-            case "delete":
-                return delete();
-        }
+        return switch (methodName) {
+            case "create" -> create();
+            case "read" -> read();
+            case "update" -> update();
+            case "search" -> search();
+            case "search_internal" -> search_internal();
+            case "delete" -> delete();
+            default -> (String) context.proceed();
+        };
 
-        return (String) context.proceed();
     }
 
     public String create() throws Exception {
@@ -175,7 +173,7 @@ public class Flow {
         try {
             apply();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage(),e);
             throw new RuntimeException(e);
         }
 

@@ -7,6 +7,7 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.runtime.LaunchMode;
+import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
 
 import java.util.HashMap;
@@ -25,6 +26,9 @@ public class HapiDevServicesProcessor {
     private static final ContainerLocator hapiDevModeContainerLocator = new ContainerLocator(DEV_SERVICE_LABEL, HAPI_PORT);
     static volatile DevServicesConfig capturedDevServicesConfiguration = new DevServicesConfig();
 
+    @Inject
+    Logger logger;
+
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
@@ -38,8 +42,8 @@ public class HapiDevServicesProcessor {
                 capturedDevServicesConfiguration.shared,
                 LaunchMode.current());
 
-        System.out.println(capturedDevServicesConfiguration.serviceName);
-        System.out.println(capturedDevServicesConfiguration.shared);
+        logger.debug(capturedDevServicesConfiguration.serviceName);
+        logger.debug(capturedDevServicesConfiguration.shared);
 
         if (maybeContainerAddress.isPresent()) {
             // Container exists, reuse it

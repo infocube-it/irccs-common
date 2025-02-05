@@ -44,7 +44,7 @@ public class User {
 
     public static User fromPractitioner(Practitioner practitioner, String psw, String orgReq, String unitName, String role, String structure){
         User user = new User();
-            if(practitioner.getIdentifier().size() > 0 && null != practitioner.getIdentifier().get(0).getValue()){
+            if(!practitioner.getIdentifier().isEmpty() && null != practitioner.getIdentifier().get(0).getValue()){
                 user.setId(practitioner.getIdentifier().get(0).getValue());
             }
             user.setEnabled(practitioner.getActive());
@@ -67,7 +67,6 @@ public class User {
             if(null != psw){
                 user.setPassword(psw);
             }
-        System.out.println(user.toString());
         return user;
     }
 /*

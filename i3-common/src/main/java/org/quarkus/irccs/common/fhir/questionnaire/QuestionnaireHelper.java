@@ -1,19 +1,21 @@
 package org.quarkus.irccs.common.fhir.questionnaire;
 
 import org.hl7.fhir.r5.model.Questionnaire;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.Optional;
 
 public class QuestionnaireHelper {
+
+    private static final Logger log = LoggerFactory.getLogger(QuestionnaireHelper.class);
     public static Questionnaire adjustLinkId(Questionnaire questionnaire) {
         // last one linkId
         int latestParentId = 1;
 
         // Flush all QuestionnaireLinkId
-        questionnaire.getItem().forEach(questionnaireItemComponent -> {
-            questionnaireItemComponent.setLinkId(null);
-        });
+        questionnaire.getItem().forEach(questionnaireItemComponent -> questionnaireItemComponent.setLinkId(null));
 
 
         // I'll take the last one linkId if exists
@@ -23,7 +25,7 @@ public class QuestionnaireHelper {
                     return  Integer.compare(Integer.parseInt(a.getLinkId()), Integer.parseInt(b.getLinkId()));
                 }
             }catch (Exception e) {
-                System.out.println(e.getMessage());
+                log.error(e.getMessage(),e);
             }
 
             return -1;

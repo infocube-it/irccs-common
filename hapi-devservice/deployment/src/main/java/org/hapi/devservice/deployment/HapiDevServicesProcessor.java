@@ -16,9 +16,7 @@ import java.util.Optional;
 
 /** @noinspection ALL*/
 public class HapiDevServicesProcessor {
-
-    private static final Logger LOG = Logger.getLogger(HapiDevServicesProcessor.class);
-
+    
     private static final String FEATURE = "hapi-devservice";
 
     private static final int HAPI_PORT = 8080;

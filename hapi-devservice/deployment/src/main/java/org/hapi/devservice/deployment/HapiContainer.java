@@ -13,8 +13,8 @@ import java.time.Duration;
 
 public class HapiContainer extends GenericContainer<HapiContainer> {
 
-    private static final String HAPI_VERSION = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.version", String.class).orElse("6.10.1");
-    private static final String HAPI_CONFIG_PATH = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.config-path", String.class).orElse("app-config.yaml");
+    private static final String HAPI_VERSION = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.version", String.class).orElse("7.0.2");
+    private static final String HAPI_CONFIG_PATH = ConfigProvider.getConfig().getOptionalValue("quarkus.hapi.devservices.config-path", String.class).orElse("app-config-r5.yaml");
 
     private Integer fixedPort;
 

@@ -47,6 +47,12 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-jackson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.hapi</groupId>
+            <artifactId>hapi-devservice</artifactId>
+            <version>${version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

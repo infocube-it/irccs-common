@@ -1,0 +1,20 @@
+{
+    "resourceType": "ResearchStudy",
+    "title": "Patient Journey",
+    "description": "Descrizione",
+    "status": "active",
+    "identifier": [
+        {
+            "system": "PJ",
+            "value": "PatientJourney"
+        }
+    ],
+    "recruitment": {},
+    "associatedParty": [
+        {
+            "party": {
+                "reference": "Practitioner/164"
+            }
+        }
+    ]
+}

@@ -9,23 +9,36 @@ import io.restassured.response.Response;
 import jakarta.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.http.HttpStatus;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.hl7.fhir.convertors.advisors.impl.BaseAdvisor_40_50;
 import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.Extension;
 import org.hl7.fhir.r5.model.ResearchStudy;
 import org.jboss.logging.Logger;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.quarkus.irccs.assembler.converters.FHIRResearchStudyConverter;
+import org.quarkus.irccs.client.restclient.FhirClient;
+import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @QuarkusTest
 public class ConverterResourceTest {
+    public static final String ORGANIZATION_FOR_ONCOLOGY_STUDY = "Organization for Oncology Study";
+
     // Creazione del contesto per FHIR R4
     FhirContext ctx = FhirContext.forR5();
-
+    
+    FhirRestClientConfiguration fhirRestClientConfiguration = new FhirRestClientConfiguration(
+        getFhirUrl(), 100, ctx);
+    
+    FhirClient<ResearchStudy> fhirClient = new FhirClient<>(
+        fhirRestClientConfiguration, ResearchStudy.class);
     // Parser JSON di HAPI FHIR
     IParser jsonParser = ctx.newJsonParser();
 
@@ -71,8 +84,8 @@ public class ConverterResourceTest {
     }
 
     private static String getFhirUrl() {
-        return "localhost:60586/fhir";
-        //return ConfigProvider.getConfig().getConfigValue("org.quarkus.irccs.fhir-server").getValue();
+        //return "localhost:60586/fhir";
+        return ConfigProvider.getConfig().getConfigValue("org.quarkus.irccs.fhir-server").getValue();
     }
     
     /*
@@ -123,5 +136,30 @@ public class ConverterResourceTest {
 
         assertNotNull(extR5);
         assertEquals("http://example.com", extR5.getUrl());
+    }
+
+    @Test
+    void testSaveResourceOnFhir() {
+        InputStream r5_input = this.getClass().getResourceAsStream("/researchstudy_50_example.json");
+        if (r5_input == null) {
+            logger.error("Failed to load resource: researchstudy_50_example.json");
+            throw new IllegalStateException("Resource not found");
+        }
+
+        ResearchStudy researchStudyR5 = jsonParser.parseResource(ResearchStudy.class,
+                r5_input);
+
+        Response responseCreate = RestAssured
+                .given()
+                .contentType(Constants.CT_FHIR_JSON_NEW)
+                .body(jsonParser.encodeResourceToString(researchStudyR5))
+                .when()
+                .post(getFhirUrl() + "/ResearchStudy")
+                .then()
+                .statusCode(HttpStatus.SC_CREATED)
+                .extract().response();
+
+        ResearchStudy researchStudyRes = this.fhirClient.parseResource(ResearchStudy.class, responseCreate.asString());
+        Assertions.assertNotNull(researchStudyRes);
     }
 }

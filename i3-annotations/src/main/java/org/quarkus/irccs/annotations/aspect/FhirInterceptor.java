@@ -6,6 +6,8 @@ import jakarta.interceptor.InvocationContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.hl7.fhir.convertors.conv40_50.resources40_50.Practitioner40_50;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.quarkus.irccs.annotations.models.clients.AuthMicroserviceClient;
 import org.quarkus.irccs.annotations.models.clients.GroupControllerClient;
 import org.quarkus.irccs.client.restclient.FhirClient;
@@ -54,7 +56,7 @@ public class FhirInterceptor {
             default:
                 flow = new Flow(fhirClient, context, authClient, jwt, httpHeaders);
                 flow.apply();
-                return (String) context.proceed();
+            return (String) context.proceed();
         }
 
 

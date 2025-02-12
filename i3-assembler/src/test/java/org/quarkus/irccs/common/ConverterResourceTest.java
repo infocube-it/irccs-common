@@ -2,7 +2,10 @@ package org.quarkus.irccs.common;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.api.Constants;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
 import jakarta.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +15,8 @@ import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.Extension;
 import org.hl7.fhir.r5.model.ResearchStudy;
 import org.jboss.logging.Logger;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.quarkus.irccs.common.fhir.converters.FHIRResearchStudyConverter;
+import org.quarkus.irccs.assembler.converters.FHIRResearchStudyConverter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,7 +45,7 @@ public class ConverterResourceTest {
         }
 
         ResearchStudy researchStudyR5 = jsonParser.parseResource(ResearchStudy.class,
-                                                                 r5_input);
+                r5_input);
         assertNotNull(researchStudyR5);
 
         // Converte da R5 a R4
@@ -56,20 +57,35 @@ public class ConverterResourceTest {
         assertNotNull(convertedBackR5, "Conversione R4 -> R5 fallita");
 
         assertEquals(jsonParser.encodeResourceToString(convertedBackR5),
-                                jsonParser.encodeResourceToString(researchStudyR5),
-                                "Risorse uguali");
+                jsonParser.encodeResourceToString(researchStudyR5),
+                "Risorse uguali");
+
+        Response responseGet = RestAssured
+                .given()
+                .contentType(Constants.CT_FHIR_JSON_NEW)
+                .when()
+                .get(getFhirUrl() + "/Organization")
+                .then()
+                .extract().response();
+        System.out.println(responseGet.asString());
     }
 
+    private static String getFhirUrl() {
+        return "localhost:60586/fhir";
+        //return ConfigProvider.getConfig().getConfigValue("org.quarkus.irccs.fhir-server").getValue();
+    }
+    
     /*
-    @BeforeEach
-    void setUp() {
-        BaseAdvisor_40_50 advisorMock = Mockito.mock(BaseAdvisor_40_50.class);
-        converter = new FHIRResearchStudyConverter(advisorMock);
-    }*/
+     * @BeforeEach
+     * void setUp() {
+     * BaseAdvisor_40_50 advisorMock = Mockito.mock(BaseAdvisor_40_50.class);
+     * converter = new FHIRResearchStudyConverter(advisorMock);
+     * }
+     */
 
     @Test
     void testConvertR4ToR5() {
-        org.hl7.fhir.r4.model.ResearchStudy studyR4 = new  org.hl7.fhir.r4.model.ResearchStudy();
+        org.hl7.fhir.r4.model.ResearchStudy studyR4 = new org.hl7.fhir.r4.model.ResearchStudy();
         studyR4.setId("123");
         studyR4.setTitle("Test Research");
         studyR4.setStatus(org.hl7.fhir.r4.model.ResearchStudy.ResearchStudyStatus.ACTIVE);
@@ -87,14 +103,15 @@ public class ConverterResourceTest {
         org.hl7.fhir.r5.model.ResearchStudy studyR5 = new org.hl7.fhir.r5.model.ResearchStudy();
         studyR5.setId("456");
         studyR5.setTitle("Converted Study");
-       // studyR5.setStatus(PublicationStatus.RETIRED);
+        // studyR5.setStatus(PublicationStatus.RETIRED);
 
         org.hl7.fhir.r4.model.ResearchStudy studyR4 = converter.convertR5ToR4(studyR5);
 
         assertNotNull(studyR4);
         assertEquals("456", studyR4.getId());
         assertEquals("Converted Study", studyR4.getTitle());
-        //assertEquals(ResearchStudy.ResearchStudyStatus.WITHDRAWN, studyR4.getStatus());
+        // assertEquals(ResearchStudy.ResearchStudyStatus.WITHDRAWN,
+        // studyR4.getStatus());
     }
 
     @Test

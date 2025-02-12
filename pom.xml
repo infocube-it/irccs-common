@@ -57,6 +57,11 @@
                 <version>${ca.uhn.hapi.fhir.r5.version}</version>
             </dependency>
             <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>org.hl7.fhir.r4</artifactId>
+                <version>${ca.uhn.hapi.fhir.r5.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
                 <version>${testcontainer.version}</version>

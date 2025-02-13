@@ -12,19 +12,10 @@
     <artifactId>i3-assembler</artifactId>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-structures-r5 -->
-        <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-structures-r5</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.quarkus.irccs</groupId>
             <artifactId>i3-common</artifactId>
            <version>25.1.2-PASTRL-402-SNAPSHOT</version>
         </dependency>
-
-
-
     </dependencies>
 </project>

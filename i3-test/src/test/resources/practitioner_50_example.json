@@ -1,0 +1,28 @@
+{
+    "resourceType": "Practitioner",
+    "name": [
+        {
+            "text": " Test Name Test Surname",
+            "given": [
+                "Test Name"
+            ],
+            "family": "Test Surname",
+            "prefix": [
+                ""
+            ]
+        }
+    ],
+    "telecom": [
+        {
+            "system": "phone",
+            "value": "3331231231"
+        },
+        {
+            "system": "email",
+            "value": "test@test.com"
+        }
+    ],
+    "active": true,
+    "extension": [],
+    "identifier": []
+}

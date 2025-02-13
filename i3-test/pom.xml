@@ -33,13 +33,21 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-structures-r5 -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r5</artifactId>
+            <version>${ca.uhn.hapi.fhir.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r4</artifactId>
+            <version>${ca.uhn.hapi.fhir.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.quarkus.irccs</groupId>
             <artifactId>i3-client</artifactId>
            <version>25.1.2-PASTRL-402-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>org.hapi</groupId>
             <artifactId>hapi-devservice</artifactId>

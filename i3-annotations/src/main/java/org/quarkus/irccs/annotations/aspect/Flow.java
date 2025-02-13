@@ -26,9 +26,7 @@ public class Flow {
     InvocationContext context;
     AuthMicroserviceClient authClient;
     JsonWebToken jwt;
-
-    @Inject
-    Logger logger;
+    private static final Logger logger = Logger.getLogger(Flow.class);
     public Flow(FhirClient<?> fhirClient, InvocationContext context, AuthMicroserviceClient authClient, JsonWebToken jwt, HttpHeaders httpHeaders) {
         this.fhirClient = fhirClient;
         this.context = context;

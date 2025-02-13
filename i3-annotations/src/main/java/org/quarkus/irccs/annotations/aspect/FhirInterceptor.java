@@ -14,9 +14,7 @@ import org.quarkus.irccs.client.restclient.FhirClient;
 @ApplicationScoped
 public class FhirInterceptor {
 
-
-    @Inject
-    Logger logger;
+    private static final Logger logger = Logger.getLogger(FhirInterceptor.class);
     private final AuthMicroserviceClient authClient;
     private final GroupControllerClient groupClient;
     private final JsonWebToken jwt;

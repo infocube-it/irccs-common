@@ -40,21 +40,20 @@ public class ConverterResearchStudyTest {
 
     // Creazione del contesto per FHIR R5
     FhirContext ctxR5 = FhirContext.forR5();
-    
+
     FhirRestClientConfiguration fhirRestClientConfigurationR4 = new FhirRestClientConfiguration(
-        getFhirUrl(), 100, ctxR4);
+            getFhirUrl(), 100, ctxR4);
 
     FhirRestClientConfiguration fhirRestClientConfigurationR5 = new FhirRestClientConfiguration(
-        getFhirUrl(), 100, ctxR5);
-    
+            getFhirUrl(), 100, ctxR5);
+
     FhirClient<org.hl7.fhir.r4.model.ResearchStudy> fhirClientR4 = new FhirClient<>(
-        fhirRestClientConfigurationR4, org.hl7.fhir.r4.model.ResearchStudy.class);
+            fhirRestClientConfigurationR4, org.hl7.fhir.r4.model.ResearchStudy.class);
 
     FhirClient<ResearchStudy> fhirClientR5 = new FhirClient<>(
             fhirRestClientConfigurationR5, ResearchStudy.class);
-        
-    
-        // Parser JSON di HAPI FHIR
+
+    // Parser JSON di HAPI FHIR
     IParser jsonParserR5 = ctxR5.newJsonParser();
 
     // Parser JSON di HAPI FHIR
@@ -92,7 +91,7 @@ public class ConverterResearchStudyTest {
     private static String getFhirUrl() {
         return ConfigProvider.getConfig().getConfigValue("org.quarkus.irccs.fhir-server").getValue();
     }
-    
+
     @Test
     void convertR4ToR5() {
         org.hl7.fhir.r4.model.ResearchStudy studyR4 = new org.hl7.fhir.r4.model.ResearchStudy();
@@ -142,9 +141,9 @@ public class ConverterResearchStudyTest {
 
         ResearchStudy researchStudyR5 = jsonParserR5.parseResource(ResearchStudy.class,
                 r5_input);
-        
+
         org.hl7.fhir.r4.model.ResearchStudy researchStudyR4 = converter.convertR5ToR4(researchStudyR5);
-        
+
         Response responseCreate = RestAssured
                 .given()
                 .contentType(Constants.CT_FHIR_JSON_NEW)
@@ -155,7 +154,8 @@ public class ConverterResearchStudyTest {
                 .statusCode(HttpStatus.SC_CREATED)
                 .extract().response();
 
-        org.hl7.fhir.r4.model.ResearchStudy researchStudyRes = this.fhirClientR4.parseResource(org.hl7.fhir.r4.model.ResearchStudy.class, responseCreate.asString());
+        org.hl7.fhir.r4.model.ResearchStudy researchStudyRes = this.fhirClientR4
+                .parseResource(org.hl7.fhir.r4.model.ResearchStudy.class, responseCreate.asString());
         Assertions.assertNotNull(researchStudyRes);
 
         // Converte da R4 a R5
@@ -168,7 +168,6 @@ public class ConverterResearchStudyTest {
 
     }
 
-
     @Test
     void saveGetConvertSimpleResearchStudyWithPractitionerFhir() {
         InputStream r5_input_practitioner = this.getClass().getResourceAsStream("/practitioner_50_example.json");
@@ -178,12 +177,11 @@ public class ConverterResearchStudyTest {
         }
 
         Practitioner practitionerR5 = jsonParserR5.parseResource(Practitioner.class,
-        r5_input_practitioner);
+                r5_input_practitioner);
 
-        org.hl7.fhir.r4.model.Practitioner practitionerR4 = (org.hl7.fhir.r4.model.Practitioner)VersionConvertorFactory_40_50.convertResource(practitionerR5);
+        org.hl7.fhir.r4.model.Practitioner practitionerR4 = (org.hl7.fhir.r4.model.Practitioner) VersionConvertorFactory_40_50
+                .convertResource(practitionerR5);
 
-
-        
         Response responseCreatePractitioner = RestAssured
                 .given()
                 .contentType(Constants.CT_FHIR_JSON_NEW)
@@ -194,23 +192,23 @@ public class ConverterResearchStudyTest {
                 .statusCode(HttpStatus.SC_CREATED)
                 .extract().response();
 
-        org.hl7.fhir.r4.model.Practitioner practitionerRes = this.fhirClientR4.parseResource(org.hl7.fhir.r4.model.Practitioner.class, responseCreatePractitioner.asString());
+        org.hl7.fhir.r4.model.Practitioner practitionerRes = this.fhirClientR4
+                .parseResource(org.hl7.fhir.r4.model.Practitioner.class, responseCreatePractitioner.asString());
         Assertions.assertNotNull(practitionerRes);
 
-      // Converte da R4 a R5
-      Practitioner convertedBackR5Practitioner = (Practitioner)VersionConvertorFactory_40_50.convertResource(practitionerRes);
-      Assertions.assertNotNull(convertedBackR5Practitioner);
+        // Converte da R4 a R5
+        Practitioner convertedBackR5Practitioner = (Practitioner) VersionConvertorFactory_40_50
+                .convertResource(practitionerRes);
+        Assertions.assertNotNull(convertedBackR5Practitioner);
 
-      //setto id e meta che non ci sono nel file di partenza json da cui parte la risorsa che verrà salvata sul fhir
-      practitionerR5.setId(convertedBackR5Practitioner.getId());
-      practitionerR5.setMeta(convertedBackR5Practitioner.getMeta());
+        // setto id e meta che non ci sono nel file di partenza json da cui parte la
+        // risorsa che verrà salvata sul fhir
+        practitionerR5.setId(convertedBackR5Practitioner.getId());
+        practitionerR5.setMeta(convertedBackR5Practitioner.getMeta());
 
-      assertEquals(jsonParserR5.encodeResourceToString(convertedBackR5Practitioner),
-              jsonParserR5.encodeResourceToString(practitionerR5),
-              "Risorse uguali");
-
-
-
+        assertEquals(jsonParserR5.encodeResourceToString(convertedBackR5Practitioner),
+                jsonParserR5.encodeResourceToString(practitionerR5),
+                "Risorse uguali");
 
         /* ---------------------------- RS ------------------------------- */
         InputStream r5_input = this.getClass().getResourceAsStream("/researchstudy_50_example_with_practitioner.json");
@@ -222,11 +220,12 @@ public class ConverterResearchStudyTest {
         ResearchStudy researchStudyR5 = jsonParserR5.parseResource(ResearchStudy.class,
                 r5_input);
 
-        //faccio override del valore presente nel json di test, perchè l'ho salvato nel passo precedente e recuperato dal test container fhir l'id del practitioner        
+        // faccio override del valore presente nel json di test, perchè l'ho salvato nel
+        // passo precedente e recuperato dal test container fhir l'id del practitioner
         researchStudyR5.getAssociatedParty().get(0).getParty().setReference(practitionerR5.getId());
-        
+
         org.hl7.fhir.r4.model.ResearchStudy researchStudyR4 = converter.convertR5ToR4(researchStudyR5);
-        
+
         Response responseCreateResearchStudy = RestAssured
                 .given()
                 .contentType(Constants.CT_FHIR_JSON_NEW)
@@ -237,7 +236,8 @@ public class ConverterResearchStudyTest {
                 .statusCode(HttpStatus.SC_CREATED)
                 .extract().response();
 
-        org.hl7.fhir.r4.model.ResearchStudy researchStudyRes = this.fhirClientR4.parseResource(org.hl7.fhir.r4.model.ResearchStudy.class, responseCreateResearchStudy.asString());
+        org.hl7.fhir.r4.model.ResearchStudy researchStudyRes = this.fhirClientR4
+                .parseResource(org.hl7.fhir.r4.model.ResearchStudy.class, responseCreateResearchStudy.asString());
         Assertions.assertNotNull(researchStudyRes);
 
         // Converte da R4 a R5

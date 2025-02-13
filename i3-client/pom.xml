@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.hapi</groupId>
             <artifactId>hapi-devservice</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>

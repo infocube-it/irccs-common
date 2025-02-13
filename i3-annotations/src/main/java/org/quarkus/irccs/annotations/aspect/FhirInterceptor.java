@@ -6,27 +6,20 @@ import jakarta.interceptor.InvocationContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.hl7.fhir.convertors.conv40_50.resources40_50.Practitioner40_50;
-import org.hl7.fhir.r4.model.Practitioner;
+import org.jboss.logging.Logger;
 import org.quarkus.irccs.annotations.models.clients.AuthMicroserviceClient;
 import org.quarkus.irccs.annotations.models.clients.GroupControllerClient;
 import org.quarkus.irccs.client.restclient.FhirClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.function.BiFunction;
 
 @ApplicationScoped
-@SuppressWarnings("unchecked")
 public class FhirInterceptor {
 
-    private final static Logger LOG = LoggerFactory.getLogger(FhirInterceptor.class);
 
+    @Inject
+    Logger logger;
     private final AuthMicroserviceClient authClient;
     private final GroupControllerClient groupClient;
     private final JsonWebToken jwt;
-    private final Map<String, BiFunction<FhirClient<?>, InvocationContext, Object>> lookupTable = new HashMap<>();
     private final HttpHeaders httpHeaders;
 
     @Inject
@@ -37,12 +30,12 @@ public class FhirInterceptor {
         this.httpHeaders = httpHeaders;
     }
 
-
     protected String intercept(FhirClient<?> fhirClient, InvocationContext context) throws Exception {
+        logger.info("intercept start");
         Flow flow = null;
 
         String resourceType = fhirClient.getResourceType().getSimpleName().toLowerCase(); // Get the resource type name in lowercase
-
+        logger.info("intercept resourceType:"+resourceType);
         switch (resourceType) {
             case "practitioner":
                 flow = new PractitionerFlow(fhirClient, context, authClient, jwt, httpHeaders);
@@ -56,9 +49,12 @@ public class FhirInterceptor {
             default:
                 flow = new Flow(fhirClient, context, authClient, jwt, httpHeaders);
                 flow.apply();
+            
+            logger.info("intercept end");
             return (String) context.proceed();
+            
         }
 
-
+       
     }
 }

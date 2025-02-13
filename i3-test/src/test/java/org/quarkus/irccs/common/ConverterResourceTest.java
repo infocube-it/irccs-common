@@ -20,7 +20,7 @@ import org.hl7.fhir.r5.model.ResearchStudy;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.quarkus.irccs.assembler.converters.FHIRResearchStudyConverter;
+import org.quarkus.irccs.client.converters.FHIRResearchStudyConverter;
 import org.quarkus.irccs.client.restclient.FhirClient;
 import org.quarkus.irccs.client.restclient.model.FhirRestClientConfiguration;
 

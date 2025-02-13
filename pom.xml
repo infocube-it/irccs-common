@@ -14,6 +14,7 @@
         <module>i3-client</module>
         <module>i3-authentication</module>
         <module>i3-annotations</module>
+        <module>i3-test</module>
         <module>hapi-devservice</module>
     </modules>
 
@@ -49,6 +50,11 @@
             <dependency>
                 <groupId>ca.uhn.hapi.fhir</groupId>
                 <artifactId>hapi-fhir-structures-r5</artifactId>
+                <version>${ca.uhn.hapi.fhir.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-structures-r4</artifactId>
                 <version>${ca.uhn.hapi.fhir.version}</version>
             </dependency>
             <dependency>

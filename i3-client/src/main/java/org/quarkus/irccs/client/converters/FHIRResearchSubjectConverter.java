@@ -1,4 +1,4 @@
-package org.quarkus.irccs.assembler.converters;
+package org.quarkus.irccs.client.converters;
 
 /*
 public class FHIRResearchSubjectConverter extends VersionConvertor_40_50 {

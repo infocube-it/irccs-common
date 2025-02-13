@@ -1,4 +1,4 @@
-package org.quarkus.irccs.assembler.converters;
+package org.quarkus.irccs.client.converters;
 
 import org.hl7.fhir.convertors.advisors.impl.BaseAdvisor_40_50;
 import org.hl7.fhir.convertors.context.ConversionContext40_50;

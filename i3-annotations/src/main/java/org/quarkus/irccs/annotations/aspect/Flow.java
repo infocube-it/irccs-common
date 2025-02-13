@@ -38,11 +38,12 @@ public class Flow {
     }
 
     public String apply() throws Exception {
-    // The flow is applied as follows
-    // We retrieve the method used, and an implementation of it based off of the ResourceType will be called
-        String methodName = context.getMethod().getName().toLowerCase();
 
-    // Here we follow different flows based on the fhir request's method
+        // The flow is applied as follows
+        // We retrieve the method used, and an implementation of it based off of the ResourceType will be called
+        String methodName = context.getMethod().getName().toLowerCase();
+        logger.info("flow apply methodName:"+methodName);
+        // Here we follow different flows based on the fhir request's method
         return switch (methodName) {
             case "create" -> create();
             case "read" -> read();
@@ -51,11 +52,13 @@ public class Flow {
             case "search_internal" -> search_internal();
             case "delete" -> delete();
             default -> (String) context.proceed();
+            
         };
 
     }
 
     public String create() throws Exception {
+        logger.info("flow create start");
         Class<? extends IBaseResource> resourceType = fhirClient.getResourceType();
         IBaseResource resource = fhirClient.parseResource(resourceType, context.getParameters()[0].toString());
         String organizationId;

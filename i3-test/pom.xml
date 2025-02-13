@@ -11,7 +11,6 @@
 
     <artifactId>i3-test</artifactId>
     <properties>
-        <ca.uhn.hapi.fhir.version>7.6.1</ca.uhn.hapi.fhir.version>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -36,34 +35,16 @@
     <dependencies>
         <!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-structures-r5 -->
         <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>org.hl7.fhir.convertors</artifactId>
-            <version>6.5.8</version>
-        </dependency>
-        <dependency>
             <groupId>org.quarkus.irccs</groupId>
             <artifactId>i3-client</artifactId>
            <version>25.1.2-PASTRL-402-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.hapi</groupId>
             <artifactId>hapi-devservice</artifactId>
             <version>25.1.2-PASTRL-402-SNAPSHOT</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.quarkus.irccs</groupId>
-            <artifactId>i3-assembler</artifactId>
-           <version>25.1.2-PASTRL-402-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -76,29 +57,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <releases>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>nexus-release</id>
-            <name>i3 Repository</name>
-            <url>https://nexus.infocube.it/repository/irccs-common-release</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-            </snapshots>
-            <id>nexus-snapshot</id>
-            <name>i3 Repository</name>
-            <url>https://nexus.infocube.it/repository/irccs-common-snapshot</url>
-        </repository>
-    </repositories>
-
    <build>
         <plugins>
             <plugin>

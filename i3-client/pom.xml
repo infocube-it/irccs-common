@@ -44,7 +44,6 @@
             <groupId>org.hapi</groupId>
             <artifactId>hapi-devservice</artifactId>
             <version>${version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
